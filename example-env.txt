@@ -1,0 +1,8 @@
+# MongoDB Atlas
+MONGO_URI="mongodb+srv://<db_username>:<db_password>@swe-web-app-cluster.q51im7h.mongodb.net/?appName=swe-web-app-cluster"
+MONGO_DB_NAME="nyu-blind-dating"
+
+# Flask
+FLASK_ENV="development"
+FLASK_DEBUG="1"
+SECRET_KEY="run python -c "import secrets; print(secrets.token_hex(32))" and replace"
