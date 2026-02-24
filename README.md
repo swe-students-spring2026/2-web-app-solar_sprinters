@@ -11,45 +11,60 @@ A dating/matchmaking site specifically for NYU students (Mobile-First Design Foc
 ## User stories
 [Issues (User Stories)](https://github.com/swe-students-spring2026/2-web-app-solar_sprinters/issues)
 
-## Steps necessary to run the software (NEEDS UPDATE LATER)
+## Steps necessary to run the software
 
-1. Clone the repository:
+### 1. clone and enter the repository
+```shell
+git clone https://github.com/swe-students-spring2026/2-web-app-solar_sprinters.git
 
-   `git clone https://github.com/swe-students-spring2026/2-web-app-solar_sprinters.git`
+cd 2-web-app-solar_sprinters/
 
-2. Navigate into project directory
-   cd your-repo
+```
+### 2. create local env file
+```shell
+# copies an example env to your local env
+cp example-env.txt .env
+```
+now go into the env file, and edit the following lines:
+1. inside the second line, change the <db_username> and <db_password> to the actual username/password we provided:
+`username: nyu-app-user
+password: wxPwopSb5FrtSdG3`
 
-3. Create a virtual environment
-   python -m venv venv
+2. run the command listed in line 7 in your terminal shell:
+`python -c "import secrets; print(secrets.token_hex(32))"`
 
-### Environment Variables
+   This will generate a secret key in your shell editor. Paste it in after the SECRET_KEY.
 
-Create a `.env` file based on `env.example`.
+Don't share any of the contents inside the env file. Make sure it's included in the gitignore and not pushed. 
 
-Example variables:
+### 3. create and activate virtual environment
+```shell
+python -m venv .venv
+   #WINDOWS POWERSHELL:
+   .venv\Scripts\Activate.ps1
+   #WINDOWS CMD:
+   .venv\Scripts\activate.bat
+   #MAC/LINUX:
+   source .venv/bin/activate
+```
 
-MONGO_URI=
-SECRET_KEY=
-
-4. Activate virtual environment
-   Mac/Linux:
-     source venv/bin/activate
-   Windows:
-     venv\Scripts\activate
-
-5. Install dependencies
+### 4. Install dependencies and run
+   ```shell
    pip install -r requirements.txt
+   cd back-end/
+   flask run
+   ```
 
-6. Create a .env file
-   Copy env.example and rename it to .env
-   Fill in your MongoDB credentials
-
-7. Run the application
-   `flask run`
-
-8. Open browser and go to:
+### 5. Open browser and go to:
+   ```shell
    http://127.0.0.1:5000
+   ```
+
+### 6. upon completion:
+quit flask and venv:
+```shell
+deactivate
+```
 
 ## Task boards
 https://github.com/orgs/swe-students-spring2026/projects/5/views/1?filterQuery=
