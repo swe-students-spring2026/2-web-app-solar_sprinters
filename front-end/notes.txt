@@ -1,0 +1,9 @@
+# Notes
+
+1. Work on the feature-branch
+2. Follow Figma Wireframe for designing each component
+3. Inside the search-match-page, we will display users that are already registered. In seachPage you can some of the profiles but also have a option to MANUALLY filter by the tags.
+4. When you click a profie in the searchPage -> it fetch the profile_id and takes you to the view profile page with a option to send a friend request.
+
+# To-do
+- refer to FIGMA, and continue FRONT-END development !!!!

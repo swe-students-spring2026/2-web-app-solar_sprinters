@@ -4,19 +4,87 @@
     <meta charset="UTF-8" />
     <title>NYU Match</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./static/css/style.css" />
   </head>
-  <body>
-    <div class="container">
-      <h1>NYU Match 💜</h1>
-      <p>A simple way for NYU students to connect.</p>
 
-      <div class="nav-buttons">
-        <a href="/add" class="btn">Create Profile</a>
-        <a href="/search" class="btn">Search Matches</a>
-        <a href="/match-results" class="btn">View Matches</a>
-        <a href="/edit" class="btn">Edit Profile</a>
-        <a href="/delete" class="btn danger">Delete Account</a>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    "
+  >
+    <div style="text-align: center; padding: 40px 20px">
+      <h1 style="color: #57068c; margin-bottom: 10px">NYU Match 💜</h1>
+      <p style="margin-bottom: 30px">
+        A simple way for NYU students to connect.
+      </p>
+
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          max-width: 300px;
+          margin: 0 auto;
+        "
+      >
+        <!-- route needs to be changed for flask -->
+        <a
+          href="/backend/templates/add.html"
+          style="
+            text-decoration: none;
+            padding: 12px;
+            background-color: #57068c;
+            color: white;
+            border-radius: 8px;
+          "
+          >Create Profile</a
+        >
+        <a
+          href="/backend/templates/search.html"
+          style="
+            text-decoration: none;
+            padding: 12px;
+            background-color: #57068c;
+            color: white;
+            border-radius: 8px;
+          "
+          >Search Matches</a
+        >
+        <a
+          href="/backend/templates/match_results.html"
+          style="
+            text-decoration: none;
+            padding: 12px;
+            background-color: #57068c;
+            color: white;
+            border-radius: 8px;
+          "
+          >View Matches</a
+        >
+        <a
+          href="/backend/templates/edit.html"
+          style="
+            text-decoration: none;
+            padding: 12px;
+            background-color: #57068c;
+            color: white;
+            border-radius: 8px;
+          "
+          >Edit Profile</a
+        >
+        <a
+          href="/backend/templates/delete.html"
+          style="
+            text-decoration: none;
+            padding: 12px;
+            background-color: #cc0000;
+            color: white;
+            border-radius: 8px;
+          "
+          >Delete Account</a
+        >
       </div>
     </div>
   </body>

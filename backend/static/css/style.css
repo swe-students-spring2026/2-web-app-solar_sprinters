@@ -1,3 +1,4 @@
+/* General body and container */
 body {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
@@ -5,30 +6,55 @@ body {
   padding: 0;
 }
 
-.container {
-  text-align: center;
-  padding: 40px 20px;
-}
-
-h1 {
+/* Headings */
+h1, h2, h3 {
   color: #57068c; /* NYU purple */
+  margin: 10px 0;
 }
 
-.nav-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 30px;
+/* Card style for profiles and content blocks */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(87,6,140,0.1);
+  border-left: 5px solid #57068c;
+  margin-bottom: 15px;
 }
 
+/* Buttons */
 .btn {
   text-decoration: none;
   padding: 12px;
   background-color: #57068c;
   color: white;
   border-radius: 8px;
+  text-align: center;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .btn.danger {
   background-color: #cc0000;
+}
+
+/* Forms */
+input, select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+/* Mobile-first flex for nav buttons */
+.nav-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
 }

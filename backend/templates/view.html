@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+  <head>
+    <title>View Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 20px;
+      background: #f7f4fb;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    "
+  >
+    <div style="max-width: 500px; margin: 0 auto">
+      <a
+        href="index.html"
+        style="
+          padding: 10px 15px;
+          background: #57068c;
+          color: white;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-block;
+        "
+      >
+        Back
+      </a>
+      <h1 style="text-align: center; color: #57068c; margin-bottom: 25px">
+        Profile
+      </h1>
+
+      <div
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
+          border-left: 5px solid #57068c;
+        "
+      >
+        <p style="margin: 8px 0"><strong>Name:</strong> {{ name }}</p>
+        <p style="margin: 8px 0"><strong>Address:</strong> {{ address }}</p>
+
+        <h3 style="margin-top: 15px; margin-bottom: 8px; color: #57068c">
+          Tags
+        </h3>
+        <p style="margin: 5px 0">{{ tags | join(', ') }}</p>
+
+        <h3 style="margin-top: 15px; margin-bottom: 8px; color: #57068c">
+          Emoji
+        </h3>
+        <p style="margin: 5px 0">{{ emoji }}</p>
+
+        <h3 style="margin-top: 15px; margin-bottom: 8px; color: #57068c">
+          Description
+        </h3>
+        <p style="margin: 5px 0">{{ description }}</p>
+
+        <h3 style="margin-top: 15px; margin-bottom: 8px; color: #57068c">
+          Age
+        </h3>
+        <p style="margin: 5px 0">{{ age }}</p>
+
+        <h3 style="margin-top: 15px; margin-bottom: 8px; color: #57068c">
+          Major
+        </h3>
+        <p style="margin: 5px 0">{{ major }}</p>
+      </div>
+    </div>
+  </body>
+</html>
