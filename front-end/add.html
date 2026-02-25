@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Create Profile</title>
+
+    <!-- Connect CSS correctly using Flask -->
+    <!-- User fills form → Submit → Save to DB → Show profile page -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Create Your Profile</h1>
+
+      <!-- Use url_for instead of hardcoding route -->
+      <form method="POST" action="{{ url_for('view_profile') }}">
+        <label>
+          Name:
+          <input type="text" name="name" placeholder="Enter name" required />
+        </label>
+
+        <label>
+          Address:
+          <input
+            type="text"
+            name="email"
+            placeholder="email address"
+            required
+          />
+        </label>
+
+        <h3>Pick Tags</h3>
+
+        <div class="tags">
+          <label
+            ><input type="checkbox" name="tags" value="foodie" /> Foodie</label
+          >
+          <label
+            ><input type="checkbox" name="tags" value="asian" /> Asian</label
+          >
+          <label
+            ><input type="checkbox" name="tags" value="athletic" />
+            Athletic</label
+          >
+          <label
+            ><input type="checkbox" name="tags" value="travel" /> Travel</label
+          >
+        </div>
+
+        <h3>Pick Emoji</h3>
+
+        <select name="emoji" required>
+          <option value="">-- Select an emoji --</option>
+          <option value="😄">😄 Happy</option>
+          <option value="🍕">🍕 Foodie</option>
+          <option value="🏋️">🏋️ Athletic</option>
+          <option value="✈️">✈️ Traveler</option>
+          <option value="🎮">🎮 Gamer</option>
+        </select>
+
+        <label>
+          Description:
+          <input
+            type="text"
+            name="description"
+            placeholder="Enter description"
+          />
+        </label>
+
+        <label>
+          Age:
+          <input type="number" name="age" placeholder="Enter age" min="0" />
+        </label>
+
+        <label>
+          Major:
+          <input type="text" name="major" placeholder="Enter major" />
+        </label>
+
+        <br /><br />
+
+        <button type="submit" class="btn">Create Profile</button>
+      </form>
+    </div>
+  </body>
+</html>

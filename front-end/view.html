@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>View Profile</title>
+  </head>
+  <body>
+    <h1>Profile</h1>
+
+    <p><strong>Name:</strong> {{ name }}</p>
+    <p><strong>Address:</strong> {{ address }}</p>
+
+    <h3>Tags</h3>
+    <p>{{ tags | join(', ') }}</p>
+
+    <h3>Emoji</h3>
+    <p>{{ emoji }}</p>
+
+    <h3>Description</h3>
+    <p>{{ description }}</p>
+
+    <h3>Age</h3>
+    <p>{{ age }}</p>
+
+    <h3>Major</h3>
+    <p>{{ major }}</p>
+  </body>
+</html>

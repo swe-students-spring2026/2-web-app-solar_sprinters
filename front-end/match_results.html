@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Pending Match Requests</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Pending Match Requests</h1>
+
+      {% if requests %} {% for request in requests %}
+      <div class="card">
+        <h3>{{ request.sender.name }} {{ request.sender.emoji }}</h3>
+        <p><strong>Major:</strong> {{ request.sender.major }}</p>
+        <p><strong>Tags:</strong> {{ request.sender.tags | join(', ') }}</p>
+        <p>{{ request.sender.description }}</p>
+
+        <form method="POST" action="{{ url_for('handle_request') }}">
+          <input type="hidden" name="request_id" value="{{ request._id }}" />
+
+          <button type="submit" name="action" value="accept" class="accept-btn">
+            Accept
+          </button>
+
+          <button type="submit" name="action" value="reject" class="reject-btn">
+            Reject
+          </button>
+        </form>
+      </div>
+      {% endfor %} {% else %}
+      <p>No pending requests.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

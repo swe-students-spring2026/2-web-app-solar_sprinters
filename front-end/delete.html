@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Delete Profile</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Delete Profile</h1>
+
+      <div class="card">
+        <h3>{{ profile.name }} {{ profile.emoji }}</h3>
+        <p><strong>Major:</strong> {{ profile.major }}</p>
+        <p><strong>Tags:</strong> {{ profile.tags | join(', ') }}</p>
+      </div>
+
+      <p style="color: red">Are you sure you want to delete this profile?</p>
+
+      <!-- CONFIRM DELETE -->
+      <form method="POST">
+        <button type="submit" class="delete-btn">Yes, Delete</button>
+      </form>
+
+      <!-- CANCEL -->
+      <a href="{{ url_for('view_profiles') }}">Cancel</a>
+    </div>
+  </body>
+</html>

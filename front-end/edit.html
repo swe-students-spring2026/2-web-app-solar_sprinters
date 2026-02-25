@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Update Your Profile</h1>
+
+        <!-- Send POST to update route -->
+        <form method="POST" action="{{ url_for('update_profile', profile_id=profile._id) }}">
+
+            <label>
+                Name:
+                <input type="text" name="name" value="{{ profile.name }}" required>
+            </label>
+
+            <label>
+                Address:
+                <input type="text" name="address" value="{{ profile.address }}" required>
+            </label>
+
+            <h3>Pick Tags</h3>
+
+            <label>
+                <input type="checkbox" name="tags" value="foodie"
+                {% if "foodie" in profile.tags %}checked{% endif %}>
+                Foodie
+            </label>
+
+            <label>
+                <input type="checkbox" name="tags" value="asian"
+                {% if "asian" in profile.tags %}checked{% endif %}>
+                Asian
+            </label>
+
+            <label>
+                <input type="checkbox" name="tags" value="athletic"
+                {% if "athletic" in profile.tags %}checked{% endif %}>
+                Athletic
+            </label>
+
+            <label>
+                <input type="checkbox" name="tags" value="travel"
+                {% if "travel" in profile.tags %}checked{% endif %}>
+                Travel
+            </label>
+
+            <h3>Pick Emoji</h3>
+
+            <select name="emoji">
+                <option value="😄" {% if profile.emoji == "😄" %}selected{% endif %}>😄 Happy</option>
+                <option value="🍕" {% if profile.emoji == "🍕" %}selected{% endif %}>🍕 Foodie</option>
+                <option value="🏋️" {% if profile.emoji == "🏋️" %}selected{% endif %}>🏋️ Athletic</option>
+                <option value="✈️" {% if profile.emoji == "✈️" %}selected{% endif %}>✈️ Traveler</option>
+                <option value="🎮" {% if profile.emoji == "🎮" %}selected{% endif %}>🎮 Gamer</option>
+            </select>
+
+            <label>
+                Description:
+                <input type="text" name="description" value="{{ profile.description }}">
+            </label>
+
+            <label>
+                Age:
+                <input type="number" name="age" value="{{ profile.age }}">
+            </label>
+
+            <label>
+                Major:
+                <input type="text" name="major" value="{{ profile.major }}">
+            </label>
+
+            <br><br>
+
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+
+</body>
+</html>
