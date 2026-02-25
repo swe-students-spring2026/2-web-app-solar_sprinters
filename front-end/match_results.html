@@ -2,36 +2,121 @@
 <html>
   <head>
     <title>Pending Match Requests</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
-  <body>
-    <div class="container">
-      <h1>Pending Match Requests</h1>
+
+  <body
+    style="
+      margin: 0;
+      padding: 20px;
+      background: #f7f4fb;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    "
+  >
+    <div style="max-width: 500px; margin: 0 auto">
+      <a
+        href="index.html"
+        style="
+          padding: 10px 15px;
+          background: #57068c;
+          color: white;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-block;
+        "
+      >
+        Back
+      </a>
+      <h1 style="text-align: center; color: #57068c; margin-bottom: 25px">
+        Pending Match Requests
+      </h1>
 
       {% if requests %} {% for request in requests %}
-      <div class="card">
-        <h3>{{ request.sender.name }} {{ request.sender.emoji }}</h3>
-        <p><strong>Major:</strong> {{ request.sender.major }}</p>
-        <p><strong>Tags:</strong> {{ request.sender.tags | join(', ') }}</p>
-        <p>{{ request.sender.description }}</p>
+      <div
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
+          margin-bottom: 20px;
+          border-left: 5px solid #57068c;
+        "
+      >
+        <h3 style="margin: 0 0 10px 0">
+          {{ request.sender.name }} {{ request.sender.emoji }}
+        </h3>
 
-        <form method="POST" action="{{ url_for('handle_request') }}">
+        <p style="margin: 5px 0">
+          <strong>Major:</strong> {{ request.sender.major }}
+        </p>
+
+        <p style="margin: 5px 0">
+          <strong>Tags:</strong> {{ request.sender.tags | join(', ') }}
+        </p>
+
+        <p style="margin: 8px 0 15px 0; color: #555">
+          {{ request.sender.description }}
+        </p>
+
+        <form
+          method="POST"
+          action="{{ url_for('handle_request') }}"
+          style="display: flex; gap: 10px"
+        >
           <input type="hidden" name="request_id" value="{{ request._id }}" />
 
-          <button type="submit" name="action" value="accept" class="accept-btn">
+          <button
+            type="submit"
+            name="action"
+            value="accept"
+            style="
+              flex: 1;
+              padding: 12px;
+              border: none;
+              border-radius: 8px;
+              background: #57068c;
+              color: white;
+              font-weight: bold;
+              cursor: pointer;
+            "
+          >
             Accept
           </button>
 
-          <button type="submit" name="action" value="reject" class="reject-btn">
+          <button
+            type="submit"
+            name="action"
+            value="reject"
+            style="
+              flex: 1;
+              padding: 12px;
+              border: none;
+              border-radius: 8px;
+              background: #b19cd9;
+              color: white;
+              font-weight: bold;
+              cursor: pointer;
+            "
+          >
             Reject
           </button>
         </form>
       </div>
+
       {% endfor %} {% else %}
-      <p>No pending requests.</p>
+
+      <div
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 12px;
+          text-align: center;
+          box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
+        "
+      >
+        <p style="margin: 0; color: #555">No pending requests.</p>
+      </div>
+
       {% endif %}
     </div>
   </body>

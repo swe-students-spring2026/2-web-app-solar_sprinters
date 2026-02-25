@@ -2,55 +2,77 @@
 <html>
 <head>
     <title>Update Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-<body>
 
-    <div class="container">
-        <h1>Update Your Profile</h1>
+<body style="margin:0; padding:20px; background:#f7f4fb; font-family:-apple-system, BlinkMacSystemFont, sans-serif;">
 
-        <!-- Send POST to update route -->
-        <form method="POST" action="{{ url_for('update_profile', profile_id=profile._id) }}">
+    <div style="background:white; padding:25px; border-radius:12px; box-shadow:0 6px 20px rgba(87,6,140,0.1); max-width:500px; margin:0 auto;">
+      <a
+        href="index.html"
+        style="
+          padding: 10px 15px;
+          background: #57068c;
+          color: white;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-block;
+        "
+      >
+        Back
+      </a>
+        <h1 style="text-align:center; color:#57068c; margin-bottom:20px;">
+            Update Your Profile
+        </h1>
 
-            <label>
+        <form method="POST"
+              action="{{ url_for('update_profile', profile_id=profile._id) }}"
+              style="display:flex; flex-direction:column; gap:15px;">
+
+            <label style="display:flex; flex-direction:column; font-size:14px;">
                 Name:
-                <input type="text" name="name" value="{{ profile.name }}" required>
+                <input type="text" name="name" value="{{ profile.name }}" required
+                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
             </label>
 
-            <label>
+            <label style="display:flex; flex-direction:column; font-size:14px;">
                 Address:
-                <input type="text" name="address" value="{{ profile.address }}" required>
+                <input type="text" name="address" value="{{ profile.address }}" required
+                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
             </label>
 
-            <h3>Pick Tags</h3>
+            <h3 style="color:#57068c; margin-top:10px;">Pick Tags</h3>
 
-            <label>
-                <input type="checkbox" name="tags" value="foodie"
-                {% if "foodie" in profile.tags %}checked{% endif %}>
-                Foodie
-            </label>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <label>
+                    <input type="checkbox" name="tags" value="foodie"
+                    {% if "foodie" in profile.tags %}checked{% endif %}>
+                    Foodie
+                </label>
 
-            <label>
-                <input type="checkbox" name="tags" value="asian"
-                {% if "asian" in profile.tags %}checked{% endif %}>
-                Asian
-            </label>
+                <label>
+                    <input type="checkbox" name="tags" value="asian"
+                    {% if "asian" in profile.tags %}checked{% endif %}>
+                    Asian
+                </label>
 
-            <label>
-                <input type="checkbox" name="tags" value="athletic"
-                {% if "athletic" in profile.tags %}checked{% endif %}>
-                Athletic
-            </label>
+                <label>
+                    <input type="checkbox" name="tags" value="athletic"
+                    {% if "athletic" in profile.tags %}checked{% endif %}>
+                    Athletic
+                </label>
 
-            <label>
-                <input type="checkbox" name="tags" value="travel"
-                {% if "travel" in profile.tags %}checked{% endif %}>
-                Travel
-            </label>
+                <label>
+                    <input type="checkbox" name="tags" value="travel"
+                    {% if "travel" in profile.tags %}checked{% endif %}>
+                    Travel
+                </label>
+            </div>
 
-            <h3>Pick Emoji</h3>
+            <h3 style="color:#57068c; margin-top:10px;">Pick Emoji</h3>
 
-            <select name="emoji">
+            <select name="emoji"
+                    style="padding:10px; border-radius:8px; border:1px solid #ddd;">
                 <option value="😄" {% if profile.emoji == "😄" %}selected{% endif %}>😄 Happy</option>
                 <option value="🍕" {% if profile.emoji == "🍕" %}selected{% endif %}>🍕 Foodie</option>
                 <option value="🏋️" {% if profile.emoji == "🏋️" %}selected{% endif %}>🏋️ Athletic</option>
@@ -58,24 +80,29 @@
                 <option value="🎮" {% if profile.emoji == "🎮" %}selected{% endif %}>🎮 Gamer</option>
             </select>
 
-            <label>
+            <label style="display:flex; flex-direction:column; font-size:14px;">
                 Description:
-                <input type="text" name="description" value="{{ profile.description }}">
+                <input type="text" name="description" value="{{ profile.description }}"
+                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
             </label>
 
-            <label>
+            <label style="display:flex; flex-direction:column; font-size:14px;">
                 Age:
-                <input type="number" name="age" value="{{ profile.age }}">
+                <input type="number" name="age" value="{{ profile.age }}"
+                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
             </label>
 
-            <label>
+            <label style="display:flex; flex-direction:column; font-size:14px;">
                 Major:
-                <input type="text" name="major" value="{{ profile.major }}">
+                <input type="text" name="major" value="{{ profile.major }}"
+                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
             </label>
 
-            <br><br>
+            <button type="submit"
+                    style="margin-top:15px; padding:12px; border:none; border-radius:8px; background:#57068c; color:white; font-weight:bold; font-size:15px; cursor:pointer;">
+                Update Profile
+            </button>
 
-            <button type="submit">Update Profile</button>
         </form>
     </div>
 
