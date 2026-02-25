@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Search Profiles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 20px;
+      background: #f7f4fb;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    "
+  >
+    <div style="max-width: 600px; margin: 0 auto">
+      <a
+        href="index.html"
+        style="
+          padding: 10px 15px;
+          background: #57068c;
+          color: white;
+          border-radius: 8px;
+          text-decoration: none;
+          display: inline-block;
+        "
+      >
+        Back
+      </a>
+      <h1 style="text-align: center; color: #57068c; margin-bottom: 25px">
+        Search Profiles
+      </h1>
+
+      <!-- FILTER AREA -->
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-bottom: 20px;
+        "
+      >
+        <input
+          type="text"
+          id="searchName"
+          placeholder="Search by name"
+          style="padding: 10px; border-radius: 8px; border: 1px solid #ddd"
+        />
+
+        <input
+          type="text"
+          id="searchMajor"
+          placeholder="Search by major"
+          style="padding: 10px; border-radius: 8px; border: 1px solid #ddd"
+        />
+
+        <select
+          id="searchTag"
+          style="padding: 10px; border-radius: 8px; border: 1px solid #ddd"
+        >
+          <option value="">Filter by tag</option>
+          <option value="foodie">Foodie</option>
+          <option value="asian">Asian</option>
+          <option value="athletic">Athletic</option>
+          <option value="travel">Travel</option>
+        </select>
+      </div>
+
+      <hr
+        style="border: none; border-top: 1px solid #ddd; margin-bottom: 20px"
+      />
+
+      <!-- PROFILES LIST -->
+      <div id="profileList">
+        {% for profile in profiles %}
+        <div
+          class="card profile-card"
+          data-name="{{ profile.name | lower }}"
+          data-major="{{ profile.major | lower }}"
+          data-tags="{{ profile.tags | join(' ') }}"
+          style="
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
+            margin-bottom: 15px;
+            border-left: 5px solid #57068c;
+          "
+        >
+          <h3 style="margin: 0 0 10px 0">
+            {{ profile.name }} {{ profile.emoji }}
+          </h3>
+          <p style="margin: 5px 0">
+            <strong>Major:</strong> {{ profile.major }}
+          </p>
+          <p style="margin: 5px 0">
+            <strong>Tags:</strong> {{ profile.tags | join(', ') }}
+          </p>
+          <p style="margin: 8px 0 0 0; color: #555">
+            <strong>Description:</strong> {{ profile.description }}
+          </p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <script>
+      const nameInput = document.getElementById("searchName");
+      const majorInput = document.getElementById("searchMajor");
+      const tagSelect = document.getElementById("searchTag");
+      const profileList = document.getElementById("profileList").children;
+
+      function filterProfiles() {
+        const nameFilter = nameInput.value.toLowerCase();
+        const majorFilter = majorInput.value.toLowerCase();
+        const tagFilter = tagSelect.value.toLowerCase();
+
+        for (let card of profileList) {
+          const name = card.getAttribute("data-name");
+          const major = card.getAttribute("data-major");
+          const tags = card.getAttribute("data-tags");
+
+          const matchName = !nameFilter || name.includes(nameFilter);
+          const matchMajor = !majorFilter || major.includes(majorFilter);
+          const matchTags = !tagFilter || tags.includes(tagFilter);
+
+          if (matchName && matchMajor && matchTags) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        }
+      }
+
+      nameInput.addEventListener("input", filterProfiles);
+      majorInput.addEventListener("input", filterProfiles);
+      tagSelect.addEventListener("change", filterProfiles);
+    </script>
+  </body>
+</html>
