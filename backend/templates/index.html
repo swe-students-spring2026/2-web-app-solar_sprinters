@@ -31,7 +31,7 @@
       >
         <!-- route needs to be changed for flask -->
         <a
-          href="/backend/templates/add.html"
+          href="{{ url_for('add_page') }}"
           style="
             text-decoration: none;
             padding: 12px;
@@ -42,7 +42,7 @@
           >Create Profile</a
         >
         <a
-          href="/backend/templates/search.html"
+          href="{{ url_for('search_page') }}"
           style="
             text-decoration: none;
             padding: 12px;
@@ -53,7 +53,7 @@
           >Search Matches</a
         >
         <a
-          href="/backend/templates/match_results.html"
+          href="{{ url_for('match_results_page') }}"
           style="
             text-decoration: none;
             padding: 12px;
@@ -64,7 +64,7 @@
           >View Matches</a
         >
         <a
-          href="/backend/templates/edit.html"
+          href="{{ url_for('edit_page') }}"
           style="
             text-decoration: none;
             padding: 12px;
@@ -75,7 +75,7 @@
           >Edit Profile</a
         >
         <a
-          href="/backend/templates/delete.html"
+          href="{{ url_for('delete_page') }}"
           style="
             text-decoration: none;
             padding: 12px;

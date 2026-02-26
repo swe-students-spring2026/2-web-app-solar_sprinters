@@ -24,7 +24,7 @@
       "
     >
       <a
-        href="index.html"
+        href="{{ url_for('home') }}"
         style="
           padding: 10px 15px;
           background: #57068c;
@@ -42,7 +42,7 @@
       <!-- The action attribute in a <form> basically tells the browser where to send the form data when the user clicks the submit button -->
       <form
         method="POST"
-        action="{{ url_for('view_profile') }}"
+        action="{{ url_for('add_page') }}"
         style="display: flex; flex-direction: column; gap: 15px"
       >
         <label style="display: flex; flex-direction: column; font-size: 14px">
@@ -65,7 +65,7 @@
           Address:
           <input
             type="text"
-            name="email"
+            name="address"
             placeholder="email address"
             required
             style="
