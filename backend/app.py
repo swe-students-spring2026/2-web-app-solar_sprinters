@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, render_template, redirect, request, url_for
 from dotenv import load_dotenv
+from pymongo.errors import DuplicateKeyError, PyMongoError
 from .db import get_db
 from .utils import serialize_doc
 
@@ -69,25 +70,73 @@ def create_app():
     def add_page():
         if request.method == "POST":
             name = request.form.get("name", "")
-            address = request.form.get("address", "")
+            email = request.form.get("address", "")
             tags = request.form.getlist("tags")
             emoji = request.form.get("emoji", "")
             description = request.form.get("description", "")
-            age = request.form.get("age", "")
+            age_raw = request.form.get("age", "")
             major = request.form.get("major", "")
+
+            form_data = {
+                "name": name,
+                "address": email,
+                "tags": tags,
+                "emoji": emoji,
+                "description": description,
+                "age": age_raw,
+                "major": major,
+            }
+
+            db = get_db()
+            profiles = db["profiles"]
+            profiles.create_index("email", unique=True)
+
+            if profiles.find_one({"email": email}):
+                return render_template(
+                    "add.html",
+                    error="That email is already in use. Please use a different one or log in.",
+                    form_data=form_data,
+                )
+
+            age_value = int(age_raw) if age_raw.isdigit() else None
+            profile_doc = {
+                "name": name,
+                "email": email,
+                "address": email,
+                "tags": tags,
+                "emoji": emoji,
+                "description": description,
+                "age": age_value,
+                "major": major,
+            }
+
+            try:
+                profiles.insert_one(profile_doc)
+            except DuplicateKeyError:
+                return render_template(
+                    "add.html",
+                    error="That email is already in use. Please use a different one.",
+                    form_data=form_data,
+                )
+            except PyMongoError:
+                return render_template(
+                    "add.html",
+                    error="Could not create profile due to a database error. Please try again.",
+                    form_data=form_data,
+                )
 
             return render_template(
                 "view.html",
                 name=name,
-                address=address,
+                address=email,
                 tags=tags,
                 emoji=emoji,
                 description=description,
-                age=age,
+                age=age_value if age_value is not None else "",
                 major=major,
             )
 
-        return render_template("add.html")
+        return render_template("add.html", error=None, form_data={})
 
     @app.route("/delete", methods=["GET", "POST"])
     def delete_page():

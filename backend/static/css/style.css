@@ -58,3 +58,13 @@ input, select {
   margin-left: auto;
   margin-right: auto;
 }
+
+/* Error banner on create-profile form */
+.error-banner {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: #fff0f0;
+  color: #8b0000;
+  border: 1px solid #ffc6c6;
+  border-radius: 8px;
+}

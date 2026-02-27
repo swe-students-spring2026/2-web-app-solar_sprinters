@@ -3,6 +3,10 @@
   <head>
     <title>Create Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
   </head>
 
   <body
@@ -39,6 +43,11 @@
       <h1 style="text-align: center; color: #57068c; margin-bottom: 20px">
         Create Your Profile
       </h1>
+      {% if error %}
+      <div class="error-banner">
+        {{ error }}
+      </div>
+      {% endif %}
       <!-- The action attribute in a <form> basically tells the browser where to send the form data when the user clicks the submit button -->
       <form
         method="POST"
@@ -52,6 +61,7 @@
             name="name"
             placeholder="Enter name"
             required
+            value="{{ form_data.get('name', '') }}"
             style="
               margin-top: 5px;
               padding: 10px;
@@ -68,6 +78,7 @@
             name="address"
             placeholder="email address"
             required
+            value="{{ form_data.get('address', '') }}"
             style="
               margin-top: 5px;
               padding: 10px;
@@ -81,17 +92,17 @@
 
         <div style="display: flex; flex-direction: column; gap: 8px">
           <label
-            ><input type="checkbox" name="tags" value="foodie" /> Foodie</label
+            ><input type="checkbox" name="tags" value="foodie" {% if 'foodie' in form_data.get('tags', []) %}checked{% endif %} /> Foodie</label
           >
           <label
-            ><input type="checkbox" name="tags" value="asian" /> Asian</label
+            ><input type="checkbox" name="tags" value="asian" {% if 'asian' in form_data.get('tags', []) %}checked{% endif %} /> Asian</label
           >
           <label
-            ><input type="checkbox" name="tags" value="athletic" />
+            ><input type="checkbox" name="tags" value="athletic" {% if 'athletic' in form_data.get('tags', []) %}checked{% endif %} />
             Athletic</label
           >
           <label
-            ><input type="checkbox" name="tags" value="travel" /> Travel</label
+            ><input type="checkbox" name="tags" value="travel" {% if 'travel' in form_data.get('tags', []) %}checked{% endif %} /> Travel</label
           >
         </div>
 
@@ -116,6 +127,7 @@
             type="text"
             name="description"
             placeholder="Enter description"
+            value="{{ form_data.get('description', '') }}"
             style="
               margin-top: 5px;
               padding: 10px;
@@ -132,6 +144,7 @@
             name="age"
             placeholder="Enter age"
             min="0"
+            value="{{ form_data.get('age', '') }}"
             style="
               margin-top: 5px;
               padding: 10px;
@@ -147,6 +160,7 @@
             type="text"
             name="major"
             placeholder="Enter major"
+            value="{{ form_data.get('major', '') }}"
             style="
               margin-top: 5px;
               padding: 10px;
