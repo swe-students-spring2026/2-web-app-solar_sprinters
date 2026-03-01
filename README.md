@@ -51,7 +51,7 @@ python -m venv .venv
 ### 4. Install dependencies and run
    ```shell
    pip install -r requirements.txt
-   cd back-end/
+   cd backend/
    flask run
    ```
 
