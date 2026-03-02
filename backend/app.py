@@ -115,6 +115,37 @@ def search_profiles_in_db(args):
 
     return [serialize_doc(doc) for doc in docs]
 
+def update_profile_in_db(profile_id, form):
+    from .utils import to_object_id
+
+    updates = {
+        "name": form.get("name", "").strip(),
+        "address": form.get("address", "").strip(),
+        "email": form.get("address", "").strip(),
+        "tags": form.getlist("tags"),
+        "emoji": form.get("emoji", "").strip(),
+        "description": form.get("description", "").strip(),
+        "major": form.get("major", "").strip(),
+    }
+
+    age_raw = form.get("age", "").strip()
+    if age_raw:
+        if not age_raw.isdigit():
+            raise ValueError("age must be numeric")
+        updates["age"] = int(age_raw)
+
+    # remove empty-string fields so existing values are not overwritten with ""
+    clean_updates = {k: v for k, v in updates.items() if v != ""}
+
+    db = get_db()
+    result = db.profiles.update_one(
+        {"_id": to_object_id(profile_id)},
+        {"$set": clean_updates}
+    )
+
+    if result.matched_count == 0:
+        raise ValueError("profile not found")
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
@@ -149,31 +180,26 @@ def create_app():
         return render_template("delete.html", profile=profile)
 
     @app.route("/edit", methods=["GET", "POST"])
+    @app.get("/edit")
     def edit_page():
-        profile = SAMPLE_PROFILES[0]
+        from .utils import to_object_id
 
-        if request.method == "POST":
-            updated = {
-                "name": request.form.get("name", profile["name"]),
-                "address": request.form.get("address", profile["address"]),
-                "tags": request.form.getlist("tags") or profile["tags"],
-                "emoji": request.form.get("emoji", profile["emoji"]),
-                "description": request.form.get("description", profile["description"]),
-                "age": request.form.get("age", profile["age"]),
-                "major": request.form.get("major", profile["major"]),
-            }
+        db = get_db()
+        profile_id = request.args.get("id", "").strip()
 
-            return render_template(
-                "view.html",
-                name=updated["name"],
-                address=updated["address"],
-                tags=updated["tags"],
-                emoji=updated["emoji"],
-                description=updated["description"],
-                age=updated["age"],
-                major=updated["major"],
-            )
+        if profile_id:
+            try:
+                doc = db.profiles.find_one({"_id": to_object_id(profile_id)})
+            except ValueError:
+                return "Invalid profile id", 400
+        else:
+            # fallback: open most recently created profile
+            doc = db.profiles.find_one(sort=[("_id", -1)])
 
+        if not doc:
+            return "No profile found to edit", 404
+
+        profile = serialize_doc(doc)
         return render_template("edit.html", profile=profile)
 
     @app.route("/match-results", methods=["GET"])
@@ -201,26 +227,12 @@ def create_app():
 
     @app.post("/profiles/<profile_id>/update")
     def update_profile(profile_id):
-        profile = SAMPLE_PROFILES[0]
-        updated = {
-            "name": request.form.get("name", profile["name"]),
-            "address": request.form.get("address", profile["address"]),
-            "tags": request.form.getlist("tags") or profile["tags"],
-            "emoji": request.form.get("emoji", profile["emoji"]),
-            "description": request.form.get("description", profile["description"]),
-            "age": request.form.get("age", profile["age"]),
-            "major": request.form.get("major", profile["major"]),
-        }
-        return render_template(
-            "view.html",
-            name=updated["name"],
-            address=updated["address"],
-            tags=updated["tags"],
-            emoji=updated["emoji"],
-            description=updated["description"],
-            age=updated["age"],
-            major=updated["major"],
-        )
+        try:
+            update_profile_in_db(profile_id, request.form)
+        except ValueError:
+            return "Invalid update request", 400
+
+        return redirect(url_for("view_profile_page", profile_id=profile_id))
     @app.get("/profiles/<profile_id>")
     def view_profile_page(profile_id):
         from .utils import to_object_id  # local import to avoid changing top imports
