@@ -52,6 +52,45 @@ SAMPLE_PROFILES = [
 #   "current_matches": [ObjectId("..."), ObjectId("...")]
 # }
 
+def create_profile_in_db(form):
+    """
+    Create a profile from form data and insert it into MongoDB.
+    Returns the inserted document id as a string.
+    """
+    name = form.get("name", "").strip()
+    address = form.get("address", "").strip()
+    tags = form.getlist("tags")
+    emoji = form.get("emoji", "").strip()
+    description = form.get("description", "").strip()
+    major = form.get("major", "").strip()
+    age_raw = form.get("age", "").strip()
+
+    if not name or not address:
+        raise ValueError("name and address are required")
+
+    age = None
+    if age_raw:
+        if not age_raw.isdigit():
+            raise ValueError("age must be numeric")
+        age = int(age_raw)
+
+    doc = {
+        "name": name,
+        "email": address,
+        "address": address,
+        "tags": tags,
+        "emoji": emoji,
+        "description": description,
+        "age": age,
+        "major": major,
+        "pending_match_requests": [],
+        "current_matches": [],
+    }
+
+    db = get_db()
+    result = db.profiles.insert_one(doc)
+    return str(result.inserted_id)
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
@@ -68,24 +107,11 @@ def create_app():
     @app.route("/add", methods=["GET", "POST"])
     def add_page():
         if request.method == "POST":
-            name = request.form.get("name", "")
-            address = request.form.get("address", "")
-            tags = request.form.getlist("tags")
-            emoji = request.form.get("emoji", "")
-            description = request.form.get("description", "")
-            age = request.form.get("age", "")
-            major = request.form.get("major", "")
-
-            return render_template(
-                "view.html",
-                name=name,
-                address=address,
-                tags=tags,
-                emoji=emoji,
-                description=description,
-                age=age,
-                major=major,
-            )
+            try:
+                create_profile_in_db(request.form)
+                return redirect(url_for("home"))
+            except ValueError:
+                return render_template("add.html"), 400
 
         return render_template("add.html")
 
@@ -168,6 +194,21 @@ def create_app():
             age=updated["age"],
             major=updated["major"],
         )
+    @app.get("/profiles/<profile_id>")
+    def view_profile_page(profile_id):
+        from .utils import to_object_id  # local import to avoid changing top imports
+
+        db = get_db()
+        try:
+            doc = db.profiles.find_one({"_id": to_object_id(profile_id)})
+        except ValueError:
+            return "Invalid profile id", 400
+
+        if not doc:
+            return "Profile not found", 404
+
+        profile = serialize_doc(doc)
+        return render_template("view.html", **profile)
 
 
     return app
