@@ -146,6 +146,39 @@ def update_profile_in_db(profile_id, form):
     if result.matched_count == 0:
         raise ValueError("profile not found")
 
+def get_pending_match_requests_for_profile(profile_id):
+    from .utils import to_object_id
+
+    db = get_db()
+
+    try:
+        me = db.profiles.find_one({"_id": to_object_id(profile_id)})
+    except ValueError:
+        raise ValueError("invalid profile id")
+
+    if not me:
+        raise ValueError("profile not found")
+
+    pending_ids = me.get("pending_match_requests", [])
+    if not pending_ids:
+        return []
+
+    sender_docs = list(db.profiles.find({"_id": {"$in": pending_ids}}))
+    sender_map = {str(doc["_id"]): doc for doc in sender_docs}
+
+    requests = []
+    for sender_id in pending_ids:
+        sid = str(sender_id)
+        sender_doc = sender_map.get(sid)
+        if sender_doc:
+            requests.append({
+                "_id": sid,
+                "sender": serialize_doc(sender_doc),
+                "status": "pending",
+            })
+
+    return requests
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
