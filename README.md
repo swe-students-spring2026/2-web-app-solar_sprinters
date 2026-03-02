@@ -1,4 +1,4 @@
-# Team Solar Sprinters – [App Name]
+# Team Solar Sprinters – [NYU Match]
 A dating/matchmaking site specifically for NYU students (Mobile-First Design Focus)
 
 ## Product vision statement

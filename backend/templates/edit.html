@@ -3,47 +3,38 @@
 <head>
     <title>Update Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body style="margin:0; padding:20px; background:#f7f4fb; font-family:-apple-system, BlinkMacSystemFont, sans-serif;">
+<body class="add-page">
 
-    <div style="background:white; padding:25px; border-radius:12px; box-shadow:0 6px 20px rgba(87,6,140,0.1); max-width:500px; margin:0 auto;">
-      <a
-        href="{{ url_for('home') }}"
-        style="
-          padding: 10px 15px;
-          background: #57068c;
-          color: white;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-block;
-        "
-      >
-        Back
-      </a>
-        <h1 style="text-align:center; color:#57068c; margin-bottom:20px;">
+    <div class="form-card">
+
+        <a href="{{ url_for('home') }}" class="back-btn">
+            Back
+        </a>
+
+        <h1 class="section-title center">
             Update Your Profile
         </h1>
 
         <form method="POST"
               action="{{ url_for('update_profile', profile_id=profile._id) }}"
-              style="display:flex; flex-direction:column; gap:15px;">
+              class="form-stack">
 
-            <label style="display:flex; flex-direction:column; font-size:14px;">
+            <label class="form-label">
                 Name:
-                <input type="text" name="name" value="{{ profile.name }}" required
-                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="text" name="name" value="{{ profile.name }}" required>
             </label>
 
-            <label style="display:flex; flex-direction:column; font-size:14px;">
+            <label class="form-label">
                 Address:
-                <input type="text" name="address" value="{{ profile.address }}" required
-                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="text" name="address" value="{{ profile.address }}" required>
             </label>
 
-            <h3 style="color:#57068c; margin-top:10px;">Pick Tags</h3>
+            <h3 class="section-title">Pick Tags</h3>
 
-            <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="checkbox-group">
                 <label>
                     <input type="checkbox" name="tags" value="foodie"
                     {% if "foodie" in profile.tags %}checked{% endif %}>
@@ -69,10 +60,9 @@
                 </label>
             </div>
 
-            <h3 style="color:#57068c; margin-top:10px;">Pick Emoji</h3>
+            <h3 class="section-title">Pick Emoji</h3>
 
-            <select name="emoji"
-                    style="padding:10px; border-radius:8px; border:1px solid #ddd;">
+            <select name="emoji">
                 <option value="😄" {% if profile.emoji == "😄" %}selected{% endif %}>😄 Happy</option>
                 <option value="🍕" {% if profile.emoji == "🍕" %}selected{% endif %}>🍕 Foodie</option>
                 <option value="🏋️" {% if profile.emoji == "🏋️" %}selected{% endif %}>🏋️ Athletic</option>
@@ -80,30 +70,27 @@
                 <option value="🎮" {% if profile.emoji == "🎮" %}selected{% endif %}>🎮 Gamer</option>
             </select>
 
-            <label style="display:flex; flex-direction:column; font-size:14px;">
+            <label class="form-label">
                 Description:
-                <input type="text" name="description" value="{{ profile.description }}"
-                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="text" name="description" value="{{ profile.description }}">
             </label>
 
-            <label style="display:flex; flex-direction:column; font-size:14px;">
+            <label class="form-label">
                 Age:
-                <input type="number" name="age" value="{{ profile.age }}"
-                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="number" name="age" value="{{ profile.age }}">
             </label>
 
-            <label style="display:flex; flex-direction:column; font-size:14px;">
+            <label class="form-label">
                 Major:
-                <input type="text" name="major" value="{{ profile.major }}"
-                       style="margin-top:5px; padding:10px; border-radius:8px; border:1px solid #ddd;">
+                <input type="text" name="major" value="{{ profile.major }}">
             </label>
 
-            <button type="submit"
-                    style="margin-top:15px; padding:12px; border:none; border-radius:8px; background:#57068c; color:white; font-weight:bold; font-size:15px; cursor:pointer;">
+            <button type="submit" class="submit-btn">
                 Update Profile
             </button>
 
         </form>
     </div>
+
 </body>
 </html>

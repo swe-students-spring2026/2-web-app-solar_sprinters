@@ -38,8 +38,13 @@ h1, h2, h3 {
   background-color: #cc0000;
 }
 
-/* Forms */
-input, select {
+/* Forms (only text-like inputs should be full width) */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
@@ -47,6 +52,14 @@ input, select {
   margin-bottom: 10px;
   box-sizing: border-box;
 }
+
+/* Fix checkboxes */
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  margin: 0;
+}
+
 
 /* Mobile-first flex for nav buttons */
 .nav-buttons {
@@ -57,4 +70,239 @@ input, select {
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* page container */
+.container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+/* title */
+.title {
+  margin-bottom: 10px;
+}
+/* subtitle */
+.subtitle {
+  margin-bottom: 30px;
+}
+
+/* page background */
+.add-page {
+  background: #f7f4fb;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/*card container*/
+.form-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/*back button*/
+.back-btn {
+  padding: 10px 15px;
+  background: #57068c;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* form layout */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* labels */
+.form-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+/* inputs spacing */
+.form-label input {
+  margin-top: 5px;
+}
+/* section headers */
+.section-title {
+  color: #57068c;
+  margin-top: 10px;
+}
+
+/* checkbox group */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* submit button */
+.submit-btn {
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #57068c;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+.section-title.center {
+  text-align: center;
+}
+/* DELETE PAGE */
+
+/* page background */
+.delete-page {
+  background: #f7f4fb;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* main card */
+.delete-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* profile preview box */
+.profile-preview {
+  background: #faf8fd;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 5px solid #57068c;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* warning text */
+.warning-text {
+  color: #d00000;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* delete button */
+.delete-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #2d003f;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* cancel link */
+.cancel-link {
+  display: inline-block;
+  margin-top: 5px;
+  color: #57068c;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* MATCH RESULTS (PENDING REQUESTS) */
+
+.page-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.card-title {
+  margin: 0 0 10px 0;
+}
+
+.card-text {
+  margin: 5px 0;
+}
+
+.card-desc {
+  margin: 8px 0 15px 0;
+  color: #555;
+}
+
+.action-row {
+  display: flex;
+  gap: 10px;
+}
+
+.action-row .btn {
+  flex: 1;
+}
+
+/* Reject button variant */
+.btn.secondary {
+  background-color: #b19cd9;
+}
+/* SEARCH PAGE */
+
+.page-wrap.wide {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+/* Card content spacing helpers */
+.card-title {
+  margin: 0 0 10px 0;
+}
+
+.card-text {
+  margin: 5px 0;
+}
+
+.card-desc {
+  margin: 8px 0 0 0;
+  color: #555;
+}
+/* VIEW PAGE helpers (add if not already present) */
+
+.page-wrap {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.section-subtitle {
+  margin-top: 15px;
+  margin-bottom: 8px;
+  color: #57068c;
+}
+
+.tight {
+  margin: 5px 0;
+}
+
+.line {
+  margin: 8px 0;
 }
