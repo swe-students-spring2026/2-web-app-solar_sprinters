@@ -91,6 +91,30 @@ def create_profile_in_db(form):
     result = db.profiles.insert_one(doc)
     return str(result.inserted_id)
 
+def search_profiles_in_db(args):
+    """Search profiles based on query parameters and return a list of matching profiles."""
+    import re
+
+    name_q = args.get("name", "").strip()
+    major_q = args.get("major", "").strip()
+    tag_q = args.get("tag", "").strip()
+
+    mongo_query = {}
+
+    if name_q:
+        mongo_query["name"] = {"$regex": re.escape(name_q), "$options": "i"}
+
+    if major_q:
+        mongo_query["major"] = {"$regex": re.escape(major_q), "$options": "i"}
+
+    if tag_q and tag_q.lower() not in ("all", "any"):
+        mongo_query["tags"] = tag_q
+
+    db = get_db()
+    docs = db.profiles.find(mongo_query).limit(50)
+
+    return [serialize_doc(doc) for doc in docs]
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
@@ -170,7 +194,10 @@ def create_app():
 
     @app.get("/search")
     def search_page():
-        return render_template("search.html", profiles=SAMPLE_PROFILES)
+        db = get_db()
+        docs = db.profiles.find({}).limit(100)
+        profiles = [serialize_doc(doc) for doc in docs]
+        return render_template("search.html", profiles=profiles)
 
     @app.post("/profiles/<profile_id>/update")
     def update_profile(profile_id):
