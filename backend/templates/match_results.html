@@ -3,121 +3,54 @@
   <head>
     <title>Pending Match Requests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
 
-  <body
-    style="
-      margin: 0;
-      padding: 20px;
-      background: #f7f4fb;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    "
-  >
-    <div style="max-width: 500px; margin: 0 auto">
-      <a
-        href="{{ url_for('home') }}"
-        style="
-          padding: 10px 15px;
-          background: #57068c;
-          color: white;
-          border-radius: 8px;
-          text-decoration: none;
-          display: inline-block;
-        "
-      >
-        Back
-      </a>
-      <h1 style="text-align: center; color: #57068c; margin-bottom: 25px">
-        Pending Match Requests
-      </h1>
+  <body class="add-page">
+    <div class="page-wrap">
 
-      {% if requests %} {% for request in requests %}
-      <div
-        style="
-          background: white;
-          padding: 20px;
-          border-radius: 12px;
-          box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
-          margin-bottom: 20px;
-          border-left: 5px solid #57068c;
-        "
-      >
-        <h3 style="margin: 0 0 10px 0">
-          {{ request.sender.name }} {{ request.sender.emoji }}
-        </h3>
+      <a href="{{ url_for('home') }}" class="back-btn">Back</a>
 
-        <p style="margin: 5px 0">
-          <strong>Major:</strong> {{ request.sender.major }}
-        </p>
+      <h1 class="section-title center">Pending Match Requests</h1>
 
-        <p style="margin: 5px 0">
-          <strong>Tags:</strong> {{ request.sender.tags | join(', ') }}
-        </p>
+      {% if requests %}
+        {% for request in requests %}
+          <div class="card">
+            <h3 class="card-title">
+              {{ request.sender.name }} {{ request.sender.emoji }}
+            </h3>
 
-        <p style="margin: 8px 0 15px 0; color: #555">
-          {{ request.sender.description }}
-        </p>
+            <p class="card-text">
+              <strong>Major:</strong> {{ request.sender.major }}
+            </p>
 
-        <form
-          method="POST"
-          action="{{ url_for('handle_request') }}"
-          style="display: flex; gap: 10px"
-        >
-          <input type="hidden" name="request_id" value="{{ request._id }}" />
+            <p class="card-text">
+              <strong>Tags:</strong> {{ request.sender.tags | join(', ') }}
+            </p>
 
-          <button
-            type="submit"
-            name="action"
-            value="accept"
-            style="
-              flex: 1;
-              padding: 12px;
-              border: none;
-              border-radius: 8px;
-              background: #57068c;
-              color: white;
-              font-weight: bold;
-              cursor: pointer;
-            "
-          >
-            Accept
-          </button>
+            <p class="card-desc">
+              {{ request.sender.description }}
+            </p>
 
-          <button
-            type="submit"
-            name="action"
-            value="reject"
-            style="
-              flex: 1;
-              padding: 12px;
-              border: none;
-              border-radius: 8px;
-              background: #b19cd9;
-              color: white;
-              font-weight: bold;
-              cursor: pointer;
-            "
-          >
-            Reject
-          </button>
-        </form>
-      </div>
+            <form method="POST" action="{{ url_for('handle_request') }}" class="action-row">
+              <input type="hidden" name="request_id" value="{{ request._id }}" />
 
-      {% endfor %} {% else %}
+              <button type="submit" name="action" value="accept" class="btn">
+                Accept
+              </button>
 
-      <div
-        style="
-          background: white;
-          padding: 20px;
-          border-radius: 12px;
-          text-align: center;
-          box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
-        "
-      >
-        <p style="margin: 0; color: #555">No pending requests.</p>
-      </div>
-
+              <button type="submit" name="action" value="reject" class="btn secondary">
+                Reject
+              </button>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="card" style="text-align:center;">
+          <p class="card-desc" style="margin:0;">No pending requests.</p>
+        </div>
       {% endif %}
+
     </div>
   </body>
 </html>
