@@ -237,14 +237,16 @@ def create_app():
 
     @app.route("/match-results", methods=["GET"])
     def match_results_page():
-        requests = [
-            {
-                "_id": "req1",
-                "sender": SAMPLE_PROFILES[1],
-                "status": "pending",
-            }
-        ]
-        return render_template("match_results.html", requests=requests)
+        profile_id = request.args.get("id", "").strip()
+        if not profile_id:
+            return "Missing profile id. Use /match-results?id=<profile_id>", 400
+
+        try:
+            requests_list = get_pending_match_requests_for_profile(profile_id)
+        except ValueError as e:
+            return str(e), 400
+
+        return render_template("match_results.html", requests=requests_list)
 
     @app.post("/match-results/handle")
     def handle_request():
