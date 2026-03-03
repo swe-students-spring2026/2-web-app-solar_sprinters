@@ -58,13 +58,14 @@ def create_profile_in_db(form):
     """
     name = form.get("name", "").strip()
     address = form.get("address", "").strip()
+    normalized_email = address.lower()
     tags = form.getlist("tags")
     emoji = form.get("emoji", "").strip()
     description = form.get("description", "").strip()
     major = form.get("major", "").strip()
     age_raw = form.get("age", "").strip()
 
-    if not name or not address:
+    if not name or not normalized_email:
         raise ValueError("name and address are required")
 
     age = None
@@ -73,10 +74,25 @@ def create_profile_in_db(form):
             raise ValueError("age must be numeric")
         age = int(age_raw)
 
+    db = get_db()
+    duplicate = db.profiles.find_one(
+        {
+            "$or": [
+                {"email_normalized": normalized_email},
+                {"email": normalized_email},
+                {"address": normalized_email},
+            ]
+        },
+        {"_id": 1},
+    )
+    if duplicate:
+        raise ValueError("A profile with this email already exists. Please log in instead.")
+
     doc = {
         "name": name,
-        "email": address,
-        "address": address,
+        "email": normalized_email,
+        "address": normalized_email,
+        "email_normalized": normalized_email,
         "tags": tags,
         "emoji": emoji,
         "description": description,
@@ -86,8 +102,10 @@ def create_profile_in_db(form):
         "current_matches": [],
     }
 
-    db = get_db()
-    result = db.profiles.insert_one(doc)
+    try:
+        result = db.profiles.insert_one(doc)
+    except DuplicateKeyError:
+        raise ValueError("A profile with this email already exists. Please log in instead.")
     return str(result.inserted_id)
 
 def search_profiles_in_db(args):
@@ -117,10 +135,14 @@ def search_profiles_in_db(args):
 def update_profile_in_db(profile_id, form):
     from .utils import to_object_id
 
+    address = form.get("address", "").strip()
+    normalized_email = address.lower()
+
     updates = {
         "name": form.get("name", "").strip(),
-        "address": form.get("address", "").strip(),
-        "email": form.get("address", "").strip(),
+        "address": normalized_email,
+        "email": normalized_email,
+        "email_normalized": normalized_email,
         "tags": form.getlist("tags"),
         "emoji": form.get("emoji", "").strip(),
         "description": form.get("description", "").strip(),
@@ -214,8 +236,8 @@ def create_app():
             try:
                 create_profile_in_db(request.form)
                 return redirect(url_for("home"))
-            except ValueError:
-                return render_template("add.html"), 400
+            except ValueError as e:
+                return render_template("add.html", error=str(e), form_data={}), 400
 
         return render_template("add.html", error=None, form_data={})
 

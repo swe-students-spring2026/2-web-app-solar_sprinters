@@ -15,6 +15,10 @@
         Create Your Profile
       </h1>
 
+      {% if error %}
+      <p class="warning-text">{{ error }}</p>
+      {% endif %}
+
       <form method="POST" action="{{ url_for('add_page') }}" class="form-stack">
 
         <label class="form-label">
