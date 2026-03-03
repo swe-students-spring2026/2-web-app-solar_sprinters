@@ -15,7 +15,7 @@
 
       {% if requests %}
         {% for request in requests %}
-          <div class="card">
+          <div class="card profile-card" data-profile-id="{{ request.sender._id }}" data-source="matches">
             <h3 class="card-title">
               {{ request.sender.name }} {{ request.sender.emoji }}
             </h3>
@@ -31,18 +31,6 @@
             <p class="card-desc">
               {{ request.sender.description }}
             </p>
-
-            <form method="POST" action="{{ url_for('handle_request') }}" class="action-row">
-              <input type="hidden" name="request_id" value="{{ request._id }}" />
-
-              <button type="submit" name="action" value="accept" class="btn">
-                Accept
-              </button>
-
-              <button type="submit" name="action" value="reject" class="btn secondary">
-                Reject
-              </button>
-            </form>
           </div>
         {% endfor %}
       {% else %}
@@ -51,6 +39,47 @@
         </div>
       {% endif %}
 
+      <h1 class="section-title center">My Matches</h1>
+      {% if matches %}
+        {% for match in matches %}
+          <div class="card profile-card" data-profile-id="{{ match._id }}" data-source="matched">
+            <h3 class="card-title">
+              {{ match.name }} {{ match.emoji }}
+            </h3>
+
+            <p class="card-text">
+              <strong>Major:</strong> {{ match.major }}
+            </p>
+
+            <p class="card-text">
+              <strong>Tags:</strong> {{ match.tags | join(', ') }}
+            </p>
+
+            <p class="card-desc">
+              {{ match.description }}
+            </p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="card" style="text-align:center;">
+          <p class="card-desc" style="margin:0;">No matches yet.</p>
+        </div>
+      {% endif %}
+
     </div>
+
+    <script>
+      const ownerId = "{{ owner_id }}";
+      const back = encodeURIComponent(window.location.href);
+
+      document.querySelectorAll(".profile-card").forEach((card) => {
+        card.addEventListener("click", () => {
+          const profileId = card.getAttribute("data-profile-id");
+          const source = card.getAttribute("data-source");
+          const url = `/profile?id=${profileId}&viewer=${ownerId}&from=${source}&back=${back}`;
+          window.location.href = url;
+        });
+      });
+    </script>
   </body>
 </html>

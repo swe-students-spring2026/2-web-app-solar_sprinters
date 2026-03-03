@@ -46,6 +46,7 @@
             data-name="{{ profile.name | lower }}"
             data-major="{{ profile.major | lower }}"
             data-tags="{{ profile.tags | join(' ') }}"
+            data-profile-id="{{ profile._id }}"
           >
             <h3 class="card-title">{{ profile.name }} {{ profile.emoji }}</h3>
 
@@ -70,6 +71,7 @@
       const majorInput = document.getElementById("searchMajor");
       const tagSelect = document.getElementById("searchTag");
       const profileList = document.getElementById("profileList").children;
+      const viewerId = "{{ viewer_id }}";
 
       function filterProfiles() {
         const nameFilter = nameInput.value.toLowerCase();
@@ -92,6 +94,15 @@
       nameInput.addEventListener("input", filterProfiles);
       majorInput.addEventListener("input", filterProfiles);
       tagSelect.addEventListener("change", filterProfiles);
+
+      Array.from(profileList).forEach((card) => {
+        card.addEventListener("click", () => {
+          const profileId = card.getAttribute("data-profile-id");
+          const back = encodeURIComponent(window.location.href);
+          const url = `/profile?id=${profileId}&viewer=${encodeURIComponent(viewerId)}&from=search&back=${back}`;
+          window.location.href = url;
+        });
+      });
     </script>
   </body>
 </html>
