@@ -2,12 +2,10 @@ import os
 from flask import Flask, jsonify, render_template, redirect, request, url_for
 from dotenv import load_dotenv
 from .db import get_db
-from .utils import serialize_doc
+from .utils import serialize_doc, to_object_id
 
 load_dotenv()
 
-
-# temp profiles to demo for now, need to connect database
 SAMPLE_PROFILES = [
     {
         "_id": "1",
@@ -179,6 +177,23 @@ def get_pending_match_requests_for_profile(profile_id):
 
     return requests
 
+def delete_profile_in_db(profile_id):
+    from .utils import to_object_id
+
+    raw_id = (profile_id or "").strip()
+    if not raw_id:
+        raise ValueError("missing profile id")
+
+    db = get_db()
+    try:
+        oid = to_object_id(raw_id)
+    except ValueError:
+        raise ValueError("invalid profile id")
+
+    result = db.profiles.delete_one({"_id": oid})
+    if result.deleted_count == 0:
+        raise ValueError("profile not found")
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
@@ -205,11 +220,32 @@ def create_app():
 
     @app.route("/delete", methods=["GET", "POST"])
     def delete_page():
-        profile = SAMPLE_PROFILES[0]
+        from .utils import to_object_id
+
+        profile_id = request.args.get("id", "").strip()
 
         if request.method == "POST":
-            return redirect(url_for("home"))
+            profile_id = request.form.get("id", "").strip() or profile_id
+            try:
+                delete_profile_in_db(profile_id)
+                return redirect(url_for("home"))
+            except ValueError as e:
+                return str(e), 400
 
+        # load profile for confirmation page
+        if not profile_id:
+            return "Missing profile id. Use /delete?id=<profile_id>", 400
+
+        db = get_db()
+        try:
+            doc = db.profiles.find_one({"_id": to_object_id(profile_id)})
+        except ValueError:
+            return "Invalid profile id", 400
+
+        if not doc:
+            return "Profile not found", 404
+
+        profile = serialize_doc(doc)
         return render_template("delete.html", profile=profile)
 
     @app.route("/edit", methods=["GET", "POST"])
@@ -269,8 +305,7 @@ def create_app():
 
         return redirect(url_for("view_profile_page", profile_id=profile_id))
     @app.get("/profiles/<profile_id>")
-    def view_profile_page(profile_id):
-        from .utils import to_object_id  # local import to avoid changing top imports
+    def view_profile_page(profile_id):  
 
         db = get_db()
         try:
