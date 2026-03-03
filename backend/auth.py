@@ -1,9 +1,4 @@
-try:
-    from flask_login import UserMixin
-except ModuleNotFoundError:
-    class UserMixin:
-        """Fallback so import doesn't mess with compile before flask_login is installed in env."""
-
+from flask_login import UserMixin
 
 from .db import get_db
 from .utils import serialize_doc, to_object_id
