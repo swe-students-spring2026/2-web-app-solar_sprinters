@@ -11,6 +11,7 @@ from .auth import (
     get_authenticated_user_id,
     get_profile_by_email,
     get_profile_by_id,
+    is_allowed_domain,
     set_authenticated_user_id,
 )
 
@@ -76,6 +77,8 @@ def create_profile_in_db(form):
 
     if not name or not normalized_email:
         raise ValueError("name and address are required")
+    if not is_allowed_domain(normalized_email):
+        raise ValueError("Please use a valid NYU email to create a profile.")
 
     age = None
     if age_raw:
@@ -311,6 +314,8 @@ def create_app():
             email_value = request.form.get("email", "").strip().lower()
             if not email_value:
                 error = "Enter your NYU email to continue."
+            elif not is_allowed_domain(email_value):
+                error = "Please use a valid NYU email to log in."
             else:
                 profile_doc = get_profile_by_email(email_value)
                 if not profile_doc:
