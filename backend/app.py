@@ -1,9 +1,18 @@
 import os
-from flask import Flask, jsonify, render_template, redirect, request, url_for
+from flask import Flask, abort, jsonify, render_template, redirect, request, session, url_for
 from dotenv import load_dotenv
 from pymongo.errors import DuplicateKeyError, PyMongoError
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from .db import get_db
 from .utils import serialize_doc, to_object_id
+from .auth import (
+    ProfileUser,
+    clear_authenticated_user_id,
+    get_authenticated_user_id,
+    get_profile_by_email,
+    get_profile_by_id,
+    set_authenticated_user_id,
+)
 
 load_dotenv()
 
@@ -218,6 +227,27 @@ def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
 
+    login_manager = LoginManager()
+    login_manager.login_view = "login_page"
+    login_manager.init_app(app)
+
+    PENDING_LOGIN_PROFILE_ID_KEY = "pending_login_profile_id"
+    PENDING_LOGIN_EMAIL_KEY = "pending_login_email"
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        profile_doc = get_profile_by_id(user_id)
+        if not profile_doc:
+            return None
+        return ProfileUser(profile_doc)
+
+    @app.before_request
+    def sync_custom_session_user_id():
+        if current_user.is_authenticated:
+            set_authenticated_user_id(session, current_user.get_id())
+        else:
+            clear_authenticated_user_id(session)
+
     def load_profile(profile_id: str):
         """Fetch and serialize a profile or raise a ValueError with a friendly message."""
         pid = (profile_id or "").strip()
@@ -234,6 +264,11 @@ def create_app():
             raise ValueError("Profile not found")
 
         return serialize_doc(doc)
+
+    def current_user_id() -> str:
+        if current_user.is_authenticated:
+            return current_user.get_id()
+        return get_authenticated_user_id(session) or ""
 
     def get_current_matches_for_profile(profile_id: str):
         """Return serialized profiles that are approved matches for the given profile."""
@@ -261,7 +296,73 @@ def create_app():
     
     @app.get("/")
     def home():
-        return render_template("index.html")
+        return render_template("index.html", session_user_id=current_user_id())
+
+    @app.route("/login", methods=["GET", "POST"])
+    def login_page():
+        if current_user.is_authenticated:
+            return redirect(url_for("home"))
+
+        error = None
+        show_create_profile_cta = False
+        email_value = ""
+
+        if request.method == "POST":
+            email_value = request.form.get("email", "").strip().lower()
+            if not email_value:
+                error = "Enter your NYU email to continue."
+            else:
+                profile_doc = get_profile_by_email(email_value)
+                if not profile_doc:
+                    error = "No account found for this email."
+                    show_create_profile_cta = True
+                else:
+                    session[PENDING_LOGIN_PROFILE_ID_KEY] = str(profile_doc["_id"])
+                    session[PENDING_LOGIN_EMAIL_KEY] = email_value
+                    return redirect(url_for("mock_nyu_auth_page"))
+
+        return render_template(
+            "login.html",
+            error=error,
+            show_create_profile_cta=show_create_profile_cta,
+            email_value=email_value,
+        )
+
+    @app.get("/login/nyu-auth")
+    def mock_nyu_auth_page():
+        pending_profile_id = (session.get(PENDING_LOGIN_PROFILE_ID_KEY) or "").strip()
+        pending_email = (session.get(PENDING_LOGIN_EMAIL_KEY) or "").strip()
+        if not pending_profile_id:
+            return redirect(url_for("login_page"))
+
+        return render_template("mock_nyu_auth.html", pending_email=pending_email)
+
+    @app.post("/login/nyu-auth/verify")
+    def mock_nyu_auth_verify():
+        pending_profile_id = (session.get(PENDING_LOGIN_PROFILE_ID_KEY) or "").strip()
+        if not pending_profile_id:
+            return redirect(url_for("login_page"))
+
+        profile_doc = get_profile_by_id(pending_profile_id)
+        if not profile_doc:
+            session.pop(PENDING_LOGIN_PROFILE_ID_KEY, None)
+            session.pop(PENDING_LOGIN_EMAIL_KEY, None)
+            return redirect(url_for("login_page"))
+
+        login_user(ProfileUser(profile_doc))
+        set_authenticated_user_id(session, str(profile_doc["_id"]))
+        session.pop(PENDING_LOGIN_PROFILE_ID_KEY, None)
+        session.pop(PENDING_LOGIN_EMAIL_KEY, None)
+        return redirect(url_for("home"))
+
+    @app.post("/logout")
+    @login_required
+    def logout():
+        logout_user()
+        clear_authenticated_user_id(session)
+        session.pop(PENDING_LOGIN_PROFILE_ID_KEY, None)
+        session.pop(PENDING_LOGIN_EMAIL_KEY, None)
+        return redirect(url_for("home"))
 
     @app.route("/add", methods=["GET", "POST"])
     def add_page():
@@ -275,15 +376,17 @@ def create_app():
         return render_template("add.html", error=None, form_data={})
 
     @app.route("/delete", methods=["GET", "POST"])
+    @login_required
     def delete_page():
         from .utils import to_object_id
 
-        profile_id = request.args.get("id", "").strip()
+        profile_id = current_user_id()
 
         if request.method == "POST":
-            profile_id = request.form.get("id", "").strip() or profile_id
             try:
                 delete_profile_in_db(profile_id)
+                logout_user()
+                clear_authenticated_user_id(session)
                 return redirect(url_for("home"))
             except ValueError as e:
                 return str(e), 400
@@ -306,20 +409,17 @@ def create_app():
 
     @app.route("/edit", methods=["GET", "POST"])
     @app.get("/edit")
+    @login_required
     def edit_page():
         from .utils import to_object_id
 
         db = get_db()
-        profile_id = request.args.get("id", "").strip()
+        profile_id = current_user_id()
 
-        if profile_id:
-            try:
-                doc = db.profiles.find_one({"_id": to_object_id(profile_id)})
-            except ValueError:
-                return "Invalid profile id", 400
-        else:
-            # fallback: open most recently created profile
-            doc = db.profiles.find_one(sort=[("_id", -1)])
+        try:
+            doc = db.profiles.find_one({"_id": to_object_id(profile_id)})
+        except ValueError:
+            return "Invalid profile id", 400
 
         if not doc:
             return "No profile found to edit", 404
@@ -328,8 +428,9 @@ def create_app():
         return render_template("edit.html", profile=profile)
 
     @app.route("/match-results", methods=["GET"])
+    @login_required
     def match_results_page():
-        profile_id = request.args.get("id", "").strip()
+        profile_id = current_user_id()
         if not profile_id:
             return "Missing profile id. Use /match-results?id=<profile_id>", 400
 
@@ -347,9 +448,10 @@ def create_app():
         )
 
     @app.post("/matches/send")
+    @login_required
     def send_match_request():
         target_id = request.form.get("target_id", "").strip()
-        requester_id = request.form.get("requester_id", "").strip()
+        requester_id = current_user_id()
         back = request.form.get("back", "").strip()
 
         if not target_id or not requester_id:
@@ -380,8 +482,9 @@ def create_app():
         return redirect(url_for("search_page", id=requester_id))
 
     @app.post("/matches/handle")
+    @login_required
     def handle_match_request():
-        owner_id = request.form.get("owner_id", "").strip()
+        owner_id = current_user_id()
         requester_id = request.form.get("requester_id", "").strip()
         action = request.form.get("action", "").strip()
         back = request.form.get("back", "").strip()
@@ -423,15 +526,20 @@ def create_app():
         return redirect(url_for("match_results_page", id=owner_id))
 
     @app.get("/search")
+    @login_required
     def search_page():
         db = get_db()
         docs = db.profiles.find({}).limit(100)
         profiles = [serialize_doc(doc) for doc in docs]
-        viewer_id = request.args.get("id", "").strip()
+        viewer_id = current_user_id()
         return render_template("search.html", profiles=profiles, viewer_id=viewer_id)
 
     @app.post("/profiles/<profile_id>/update")
+    @login_required
     def update_profile(profile_id):
+        if profile_id != current_user_id():
+            abort(403)
+
         try:
             update_profile_in_db(profile_id, request.form)
         except ValueError:
@@ -439,9 +547,10 @@ def create_app():
 
         return redirect(url_for("view_profile_page", profile_id=profile_id))
     @app.get("/profile")
+    @login_required
     def view_profile():
-        profile_id = request.args.get("id", "").strip()
-        viewer_id = request.args.get("viewer", "").strip()
+        profile_id = request.args.get("id", "").strip() or current_user_id()
+        viewer_id = current_user_id()
         source = request.args.get("from", "").strip()
         back = request.args.get("back", "").strip()
 
@@ -472,6 +581,7 @@ def create_app():
         )
 
     @app.get("/profiles/<profile_id>")
+    @login_required
     def view_profile_page(profile_id):
         # Keep old path working; funnel through the query-based view for consistency
         return redirect(url_for("view_profile", id=profile_id))
