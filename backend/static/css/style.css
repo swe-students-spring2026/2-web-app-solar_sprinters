@@ -38,6 +38,11 @@ h1, h2, h3 {
   background-color: #cc0000;
 }
 
+.btn.small {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
 /* Forms (only text-like inputs should be full width) */
 input[type="text"],
 input[type="password"],

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Log In</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+
+  <body class="add-page">
+    <div class="form-card">
+      <a href="{{ url_for('home') }}" class="back-btn">Back</a>
+
+      <h1 class="section-title center">Log In</h1>
+
+      {% if error %}
+      <p class="warning-text">{{ error }}</p>
+      {% endif %}
+
+      {% if show_create_profile_cta %}
+      <a href="{{ url_for('add_page') }}" class="btn small">Create Profile Before Logging In</a>
+      {% endif %}
+
+      <form method="POST" action="{{ url_for('login_page') }}" class="form-stack" style="margin-top: 15px;">
+        <label class="form-label">
+          NYU Email:
+          <input type="email" name="email" value="{{ email_value }}" placeholder="netid@nyu.edu" required />
+        </label>
+
+        <button type="submit" class="submit-btn">Continue</button>
+      </form>
+    </div>
+  </body>
+</html>
