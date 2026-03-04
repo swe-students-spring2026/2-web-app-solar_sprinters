@@ -12,7 +12,7 @@ A dating/matchmaking site specifically for NYU students (Mobile-First Design Foc
 [Issues (User Stories)](https://github.com/swe-students-spring2026/2-web-app-solar_sprinters/issues)
 
 ## Wireframe
-[NYU Match Wireframe](https://www.figma.com/design/hMXmgcV3I7VbQSex4dzy0N/solar_sprinters-final-design?node-id=101-752&t=hk46XLXXJbil82cd-1)
+[NYU Match Wireframe](https://www.figma.com/proto/hMXmgcV3I7VbQSex4dzy0N/solar_sprinters-final-design?node-id=1-3&t=ufsJ5KvcjBhZJNsj-0&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A3)
 
 ## Steps necessary to run the software
 
