@@ -135,6 +135,7 @@ def search_profiles_in_db(args):
 def update_profile_in_db(profile_id, form):
     from .utils import to_object_id
 
+    # lowercase and strip email to reliably compare against db
     address = form.get("address", "").strip()
     normalized_email = address.lower()
 
