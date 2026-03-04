@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <title>NYU Authentication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+
+  <body class="add-page">
+    <div class="form-card">
+      <h1 class="section-title center">NYU Authentication</h1>
+      <p class="card-desc" style="text-align:center;">
+        Verifying account for <strong>{{ pending_email }}</strong>
+      </p>
+      <p class="card-desc" style="text-align:center;">
+        Demo mode: verification always succeeds.
+      </p>
+
+      <form method="POST" action="{{ url_for('mock_nyu_auth_verify') }}" class="form-stack">
+        <button type="submit" class="submit-btn">Verify and Log In</button>
+      </form>
+    </div>
+  </body>
+</html>
