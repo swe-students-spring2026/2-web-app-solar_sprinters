@@ -169,8 +169,6 @@ def update_profile_in_db(profile_id, form):
         raise ValueError("profile not found")
 
 def get_pending_match_requests_for_profile(profile_id):
-    from .utils import to_object_id
-
     db = get_db()
 
     try:
@@ -202,8 +200,6 @@ def get_pending_match_requests_for_profile(profile_id):
     return requests
 
 def delete_profile_in_db(profile_id):
-    from .utils import to_object_id
-
     raw_id = (profile_id or "").strip()
     if not raw_id:
         raise ValueError("missing profile id")
@@ -221,6 +217,42 @@ def delete_profile_in_db(profile_id):
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
+
+    def load_profile(profile_id: str):
+        """Fetch and serialize a profile or raise a ValueError with a friendly message."""
+        pid = (profile_id or "").strip()
+        if not pid:
+            raise ValueError("Missing profile id. Use /profile?id=<profile_id>")
+
+        db = get_db()
+        try:
+            doc = db.profiles.find_one({"_id": to_object_id(pid)})
+        except ValueError:
+            raise ValueError("Invalid profile id")
+
+        if not doc:
+            raise ValueError("Profile not found")
+
+        return serialize_doc(doc)
+
+    def get_current_matches_for_profile(profile_id: str):
+        """Return serialized profiles that are approved matches for the given profile."""
+        profile = load_profile(profile_id)
+        match_ids = profile.get("current_matches", [])
+        if not match_ids:
+            return []
+
+        db = get_db()
+        try:
+            object_ids = [to_object_id(str(mid)) for mid in match_ids]
+        except ValueError:
+            object_ids = []
+
+        if not object_ids:
+            return []
+
+        match_docs = list(db.profiles.find({"_id": {"$in": object_ids}}))
+        return [serialize_doc(doc) for doc in match_docs]
 
     # Health check
     @app.get("/api/health")
@@ -303,22 +335,100 @@ def create_app():
 
         try:
             requests_list = get_pending_match_requests_for_profile(profile_id)
+            matches_list = get_current_matches_for_profile(profile_id)
         except ValueError as e:
             return str(e), 400
 
-        return render_template("match_results.html", requests=requests_list)
+        return render_template(
+            "match_results.html",
+            requests=requests_list,
+            matches=matches_list,
+            owner_id=profile_id,
+        )
 
-    @app.post("/match-results/handle")
-    def handle_request():
-        # Placeholder for accept/reject actions
-        return redirect(url_for("match_results_page"))
+    @app.post("/matches/send")
+    def send_match_request():
+        target_id = request.form.get("target_id", "").strip()
+        requester_id = request.form.get("requester_id", "").strip()
+        back = request.form.get("back", "").strip()
+
+        if not target_id or not requester_id:
+            return "Missing target or requester id", 400
+
+        if target_id == requester_id:
+            return "Cannot send a match request to yourself", 400
+
+        db = get_db()
+
+        # Ensure both profiles exist
+        try:
+            target_doc = db.profiles.find_one({"_id": to_object_id(target_id)})
+            requester_doc = db.profiles.find_one({"_id": to_object_id(requester_id)})
+        except ValueError:
+            return "Invalid profile id", 400
+
+        if not target_doc or not requester_doc:
+            return "Profile not found", 404
+
+        db.profiles.update_one(
+            {"_id": to_object_id(target_id)},
+            {"$addToSet": {"pending_match_requests": to_object_id(requester_id)}},
+        )
+
+        if back:
+            return redirect(back)
+        return redirect(url_for("search_page", id=requester_id))
+
+    @app.post("/matches/handle")
+    def handle_match_request():
+        owner_id = request.form.get("owner_id", "").strip()
+        requester_id = request.form.get("requester_id", "").strip()
+        action = request.form.get("action", "").strip()
+        back = request.form.get("back", "").strip()
+
+        if not owner_id or not requester_id or action not in ("approve", "reject"):
+            return "Missing data for handling match request", 400
+
+        db = get_db()
+        try:
+            owner_oid = to_object_id(owner_id)
+            requester_oid = to_object_id(requester_id)
+        except ValueError:
+            return "Invalid profile id", 400
+
+        # Make sure both profiles exist
+        if not db.profiles.find_one({"_id": owner_oid}) or not db.profiles.find_one({"_id": requester_oid}):
+            return "Profile not found", 404
+
+        if action == "approve":
+            db.profiles.update_one(
+                {"_id": owner_oid},
+                {
+                    "$pull": {"pending_match_requests": requester_oid},
+                    "$addToSet": {"current_matches": requester_oid},
+                },
+            )
+            db.profiles.update_one(
+                {"_id": requester_oid},
+                {"$addToSet": {"current_matches": owner_oid}},
+            )
+        else:
+            db.profiles.update_one(
+                {"_id": owner_oid},
+                {"$pull": {"pending_match_requests": requester_oid}},
+            )
+
+        if back:
+            return redirect(back)
+        return redirect(url_for("match_results_page", id=owner_id))
 
     @app.get("/search")
     def search_page():
         db = get_db()
         docs = db.profiles.find({}).limit(100)
         profiles = [serialize_doc(doc) for doc in docs]
-        return render_template("search.html", profiles=profiles)
+        viewer_id = request.args.get("id", "").strip()
+        return render_template("search.html", profiles=profiles, viewer_id=viewer_id)
 
     @app.post("/profiles/<profile_id>/update")
     def update_profile(profile_id):
@@ -328,20 +438,43 @@ def create_app():
             return "Invalid update request", 400
 
         return redirect(url_for("view_profile_page", profile_id=profile_id))
-    @app.get("/profiles/<profile_id>")
-    def view_profile_page(profile_id):  
+    @app.get("/profile")
+    def view_profile():
+        profile_id = request.args.get("id", "").strip()
+        viewer_id = request.args.get("viewer", "").strip()
+        source = request.args.get("from", "").strip()
+        back = request.args.get("back", "").strip()
 
-        db = get_db()
         try:
-            doc = db.profiles.find_one({"_id": to_object_id(profile_id)})
-        except ValueError:
-            return "Invalid profile id", 400
+            profile = load_profile(profile_id)
+        except ValueError as e:
+            return str(e), 400
 
-        if not doc:
-            return "Profile not found", 404
+        already_matched = False
+        if viewer_id and viewer_id != profile_id:
+            try:
+                viewer_profile = load_profile(viewer_id)
+            except ValueError:
+                viewer_profile = None
 
-        profile = serialize_doc(doc)
-        return render_template("view.html", **profile)
+            if viewer_profile:
+                matches_raw = viewer_profile.get("current_matches", [])
+                match_ids = {str(mid) for mid in matches_raw}
+                already_matched = str(profile_id) in match_ids or str(profile["_id"]) in match_ids
+
+        return render_template(
+            "view.html",
+            profile=profile,
+            viewer_id=viewer_id,
+            source=source,
+            back=back,
+            already_matched=already_matched,
+        )
+
+    @app.get("/profiles/<profile_id>")
+    def view_profile_page(profile_id):
+        # Keep old path working; funnel through the query-based view for consistency
+        return redirect(url_for("view_profile", id=profile_id))
 
 
     return app
