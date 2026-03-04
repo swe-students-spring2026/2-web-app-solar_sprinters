@@ -9,29 +9,57 @@
   <body class="add-page">
     <div class="page-wrap">
 
-      <a href="{{ url_for('home') }}" class="back-btn">Back</a>
+      <a href="{{ back or url_for('home') }}" class="back-btn">Back</a>
 
       <h1 class="section-title center">Profile</h1>
 
       <div class="card">
-        <p class="line"><strong>Name:</strong> {{ name }}</p>
-        <p class="line"><strong>Address:</strong> {{ address }}</p>
+        <p class="line"><strong>Name:</strong> {{ profile.name }}</p>
+        <p class="line"><strong>Address:</strong> {{ profile.address }}</p>
 
         <h3 class="section-subtitle">Tags</h3>
-        <p class="tight">{{ tags | join(', ') }}</p>
+        <p class="tight">{{ profile.tags | join(', ') }}</p>
 
         <h3 class="section-subtitle">Emoji</h3>
-        <p class="tight">{{ emoji }}</p>
+        <p class="tight">{{ profile.emoji }}</p>
 
         <h3 class="section-subtitle">Description</h3>
-        <p class="tight">{{ description }}</p>
+        <p class="tight">{{ profile.description }}</p>
 
         <h3 class="section-subtitle">Age</h3>
-        <p class="tight">{{ age }}</p>
+        <p class="tight">{{ profile.age or '—' }}</p>
 
         <h3 class="section-subtitle">Major</h3>
-        <p class="tight">{{ major }}</p>
+        <p class="tight">{{ profile.major }}</p>
       </div>
+
+      {% if viewer_id and viewer_id != profile._id %}
+        {% if source == "matches" %}
+          <form method="POST" action="{{ url_for('handle_match_request') }}" class="action-row">
+            <input type="hidden" name="owner_id" value="{{ viewer_id }}">
+            <input type="hidden" name="requester_id" value="{{ profile._id }}">
+            <input type="hidden" name="back" value="{{ back }}">
+
+            <button type="submit" name="action" value="approve" class="btn">Approve</button>
+            <button type="submit" name="action" value="reject" class="btn secondary">Reject</button>
+          </form>
+        {% else %}
+          {% if already_matched %}
+            <p class="card-desc" style="text-align:center;margin-top:12px;">You’re already matched with this profile.</p>
+          {% else %}
+            <form method="POST" action="{{ url_for('send_match_request') }}" class="action-row">
+              <input type="hidden" name="target_id" value="{{ profile._id }}">
+              <input type="hidden" name="requester_id" value="{{ viewer_id }}">
+              <input type="hidden" name="back" value="{{ back }}">
+              <button type="submit" class="btn">Send Match Request</button>
+            </form>
+          {% endif %}
+        {% endif %}
+      {% elif not viewer_id %}
+        <p class="card-desc" style="text-align:center;margin-top:12px;">
+          Missing viewer id; add <code>?viewer=&lt;your_profile_id&gt;</code> to use actions.
+        </p>
+      {% endif %}
 
     </div>
   </body>
