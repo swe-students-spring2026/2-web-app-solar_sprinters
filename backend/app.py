@@ -76,7 +76,7 @@ def create_profile_in_db(form):
     gender = form.get("gender", "").strip()
     pronouns = form.get("pronouns", "").strip()
     height = form.get("height", "").strip()
-    clubs_and_groups = form.get("clubs_and_groups", "").strip()
+    clubs_and_sports = form.get("clubs_and_sports", "").strip()
     looking_for = form.get("looking_for", "").strip()
     age_raw = form.get("age", "").strip()
 
@@ -118,7 +118,7 @@ def create_profile_in_db(form):
         "gender": gender,
         "pronouns": pronouns,
         "height": height,
-        "clubs_and_groups": clubs_and_groups,
+        "clubs_and_sports": clubs_and_sports,
         "looking_for": looking_for,
         "pending_match_requests": [],
         "current_matches": [],
@@ -173,7 +173,7 @@ def update_profile_in_db(profile_id, form):
         "gender": form.get("gender", "").strip(),
         "pronouns": form.get("pronouns", "").strip(),
         "height": form.get("height", "").strip(),
-        "clubs_and_groups": form.get("clubs_and_groups", "").strip(),
+        "clubs_and_sports": form.get("clubs_and_sports", "").strip(),
         "looking_for": form.get("looking_for", "").strip(),
     }
 
