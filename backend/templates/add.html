@@ -3,24 +3,22 @@
   <head>
     <title>Create Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
   </head>
-
   <body class="add-page">
     <div class="form-card">
       <a href="{{ url_for('home') }}" class="back-btn">Back</a>
 
-      <h1 class="section-title center">
-
-        Create Your Profile
-      </h1>
+      <h1 class="section-title center">Create Your Profile</h1>
 
       {% if error %}
       <p class="warning-text">{{ error }}</p>
       {% endif %}
 
       <form method="POST" action="{{ url_for('add_page') }}" class="form-stack">
-
         <label class="form-label">
           Name:
           <input type="text" name="name" placeholder="Enter name" required />
@@ -28,19 +26,53 @@
 
         <label class="form-label">
           Address:
-          <input type="text" name="address" placeholder="email address" required />
+          <input
+            type="text"
+            name="address"
+            placeholder="email address"
+            required
+          />
         </label>
 
         <h3 class="section-title">Pick Tags</h3>
 
         <div class="checkbox-group">
-          <label><input type="checkbox" name="tags" value="foodie" /> Foodie</label>
-          <label><input type="checkbox" name="tags" value="asian" /> Asian</label>
-          <label><input type="checkbox" name="tags" value="athletic" /> Athletic</label>
-          <label><input type="checkbox" name="tags" value="travel" /> Travel</label>
+          <label
+            ><input type="checkbox" name="tags" value="foodie" /> Foodie</label
+          >
+          <label
+            ><input type="checkbox" name="tags" value="asian" /> Asian</label
+          >
+          <label
+            ><input type="checkbox" name="tags" value="athletic" />
+            Athletic</label
+          >
+          <label
+            ><input type="checkbox" name="tags" value="travel" /> Travel</label
+          >
         </div>
 
         <h3 class="section-title">Pick Emoji</h3>
+
+        <select name="nyu_life_tags">
+          <option value="">Filter by NYU Life Tags</option>
+          <option value="boobst">Bobst regular 📚</option>
+          <option value="kimmel">Kimmel camper</option>
+          <option value="violet_pride">Violet pride 💜</option>
+          <option value="washington_square_park">
+            Always in Washington Square Park
+          </option>
+          <option value="study_abroad">Study abroad soon</option>
+        </select>
+
+        <select name="school_specific">
+          <option value="">Filter by School</option>
+          <option value="cas">CAS core survivor</option>
+          <option value="tisch">Tisch creative 🎭</option>
+          <option value="stern">Stern kid 📊</option>
+          <option value="tandon">Tandon engineer 💻</option>
+          <option value="gallatin">Gallatin build-your-own-major</option>
+        </select>
 
         <select name="emoji" required>
           <option value="">-- Select an emoji --</option>
@@ -53,7 +85,11 @@
 
         <label class="form-label">
           Description:
-          <input type="text" name="description" placeholder="Enter description" />
+          <input
+            type="text"
+            name="description"
+            placeholder="Enter description"
+          />
         </label>
 
         <label class="form-label">
@@ -83,18 +119,23 @@
 
         <label class="form-label">
           Clubs and Sports:
-          <input type="text" name="clubs_and_sports" placeholder="Enter clubs and sports" />
+          <input
+            type="text"
+            name="clubs_and_sports"
+            placeholder="Enter clubs and sports"
+          />
         </label>
 
         <label class="form-label">
           Looking For:
-          <input type="text" name="looking_for" placeholder="Enter what you are looking for" />
+          <input
+            type="text"
+            name="looking_for"
+            placeholder="Enter what you are looking for"
+          />
         </label>
 
-        <button type="submit" class="submit-btn">
-          Create Profile
-        </button>
-
+        <button type="submit" class="submit-btn">Create Profile</button>
       </form>
     </div>
   </body>

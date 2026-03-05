@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <title>NYU Match</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
   </head>
 
   <body>
@@ -14,14 +17,26 @@
 
       <div class="nav-buttons">
         {% if current_user.is_authenticated %}
-        <p class="card-desc" style="text-align:center;margin:0;">Logged in as {{ current_user.name }}</p>
-        <a href="{{ url_for('view_profile') }}" class="btn">View Profile</a>
-        <a href="{{ url_for('search_page') }}" class="btn">Search Matches</a>
-        <a href="{{ url_for('match_results_page') }}" class="btn">View Matches</a>
-        <a href="{{ url_for('edit_page') }}" class="btn">Edit Profile</a>
-        <a href="{{ url_for('delete_page') }}" class="btn danger">Delete Account</a>
+        <p class="card-desc" style="text-align: center; margin: 0">
+          Logged in as {{ current_user.name }}
+        </p>
+        <a href="{{ url_for('view_profile') }}" class="btn nav-btn"
+          >View Profile</a
+        >
+        <a href="{{ url_for('search_page') }}" class="btn nav-btn"
+          >Search Matches</a
+        >
+        <a href="{{ url_for('match_results_page') }}" class="btn nav-btn"
+          >View Matches</a
+        >
+        <a href="{{ url_for('edit_page') }}" class="btn nav-btn"
+          >Edit Profile</a
+        >
+        <a href="{{ url_for('delete_page') }}" class="btn danger"
+          >Delete Account</a
+        >
         <form method="POST" action="{{ url_for('logout') }}">
-          <button type="submit" class="btn">Log Out</button>
+          <button type="submit" class="btn btn-logout">Log Out</button>
         </form>
         {% else %}
         <a href="{{ url_for('login_page') }}" class="btn">Log In</a>
