@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Update Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,9 +19,7 @@
             Update Your Profile
         </h1>
 
-        <form method="POST"
-              action="{{ url_for('update_profile', profile_id=profile._id) }}"
-              class="form-stack">
+        <form method="POST" action="{{ url_for('update_profile', profile_id=profile._id) }}" class="form-stack">
 
             <label class="form-label">
                 Name:
@@ -36,26 +35,25 @@
 
             <div class="checkbox-group">
                 <label>
-                    <input type="checkbox" name="tags" value="foodie"
-                    {% if "foodie" in profile.tags %}checked{% endif %}>
+                    <input type="checkbox" name="tags" value="foodie" {% if "foodie" in profile.tags %}checked{% endif
+                        %}>
                     Foodie
                 </label>
 
                 <label>
-                    <input type="checkbox" name="tags" value="asian"
-                    {% if "asian" in profile.tags %}checked{% endif %}>
+                    <input type="checkbox" name="tags" value="asian" {% if "asian" in profile.tags %}checked{% endif %}>
                     Asian
                 </label>
 
                 <label>
-                    <input type="checkbox" name="tags" value="athletic"
-                    {% if "athletic" in profile.tags %}checked{% endif %}>
+                    <input type="checkbox" name="tags" value="athletic" {% if "athletic" in profile.tags %}checked{%
+                        endif %}>
                     Athletic
                 </label>
 
                 <label>
-                    <input type="checkbox" name="tags" value="travel"
-                    {% if "travel" in profile.tags %}checked{% endif %}>
+                    <input type="checkbox" name="tags" value="travel" {% if "travel" in profile.tags %}checked{% endif
+                        %}>
                     Travel
                 </label>
             </div>
@@ -63,11 +61,35 @@
             <h3 class="section-title">Pick Emoji</h3>
 
             <select name="emoji">
-                <option value="😄" {% if profile.emoji == "😄" %}selected{% endif %}>😄 Happy</option>
-                <option value="🍕" {% if profile.emoji == "🍕" %}selected{% endif %}>🍕 Foodie</option>
-                <option value="🏋️" {% if profile.emoji == "🏋️" %}selected{% endif %}>🏋️ Athletic</option>
-                <option value="✈️" {% if profile.emoji == "✈️" %}selected{% endif %}>✈️ Traveler</option>
-                <option value="🎮" {% if profile.emoji == "🎮" %}selected{% endif %}>🎮 Gamer</option>
+                <option value="😄" {% if profile.emoji=="😄" %}selected{% endif %}>😄 Happy</option>
+                <option value="🍕" {% if profile.emoji=="🍕" %}selected{% endif %}>🍕 Foodie</option>
+                <option value="🏋️" {% if profile.emoji=="🏋️" %}selected{% endif %}>🏋️ Athletic</option>
+                <option value="✈️" {% if profile.emoji=="✈️" %}selected{% endif %}>✈️ Traveler</option>
+                <option value="🎮" {% if profile.emoji=="🎮" %}selected{% endif %}>🎮 Gamer</option>
+            </select>
+
+            <select name="nyu_life_tags">
+                <option value="">Filter by NYU Life Tags</option>
+                <option value="boobst" {% if profile.nyu_life_tags=="boobst" %}selected{% endif %}>Bobst regular 📚
+                </option>
+                <option value="kimmel" {% if profile.nyu_life_tags=="kimmel" %}selected{% endif %}>Kimmel camper</option>
+                <option value="violet_pride" {% if profile.nyu_life_tags=="violet_pride" %}selected{% endif %}>Violet
+                    pride 💜</option>
+                <option value="washington_square_park" {% if profile.nyu_life_tags=="washington_square_park" %}selected{%
+                    endif %}>Always in Washington Square Park</option>
+                <option value="study_abroad" {% if profile.nyu_life_tags=="study_abroad" %}selected{% endif %}>Study
+                    abroad soon</option>
+            </select>
+
+            <select name="school_specific">
+                <option value="">Filter by School</option>
+                <option value="cas" {% if profile.school_specific=="cas" %}selected{% endif %}>CAS core survivor</option>
+                <option value="tisch" {% if profile.school_specific=="tisch" %}selected{% endif %}>Tisch creative 🎭</option>
+                <option value="stern" {% if profile.school_specific=="stern" %}selected{% endif %}>Stern kid 📊</option>
+                <option value="tandon" {% if profile.school_specific=="tandon" %}selected{% endif %}>Tandon engineer 💻
+                </option>
+                <option value="gallatin" {% if profile.school_specific=="gallatin" %}selected{% endif %}>Gallatin
+                    build-your-own-major</option>
             </select>
 
             <label class="form-label">
@@ -118,4 +140,5 @@
     </div>
 
 </body>
+
 </html>

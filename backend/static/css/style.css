@@ -7,7 +7,9 @@ body {
 }
 
 /* Headings */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #57068c; /* NYU purple */
   margin: 10px 0;
 }
@@ -17,7 +19,7 @@ h1, h2, h3 {
   background: white;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(87,6,140,0.1);
+  box-shadow: 0 6px 20px rgba(87, 6, 140, 0.1);
   border-left: 5px solid #57068c;
   margin-bottom: 15px;
 }
@@ -65,7 +67,6 @@ input[type="radio"] {
   margin: 0;
 }
 
-
 /* Mobile-first flex for nav buttons */
 .nav-buttons {
   display: flex;
@@ -75,6 +76,14 @@ input[type="radio"] {
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.nav-btn:hover {
+  background-color: #7a0bbf;
+}
+.btn-logout:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
 }
 
 /* page container */
@@ -118,6 +127,9 @@ input[type="radio"] {
   border-radius: 8px;
   text-decoration: none;
   display: inline-block;
+}
+.back-btn:hover {
+  background-color: #3d0463;
 }
 
 /* form layout */
@@ -267,9 +279,19 @@ input[type="radio"] {
 
 .filter-panel {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
+}
+.filter-panel input,
+.filter-panel select {
+  /* each input/select field takes up half the row, 2 per line max */
+  flex: 1 1 calc(50% - 10px);
+}
+
+.profile-card:hover {
+  background-color: #f3eeff;
 }
 
 .divider {

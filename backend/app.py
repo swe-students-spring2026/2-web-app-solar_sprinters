@@ -42,7 +42,6 @@ SAMPLE_PROFILES = [
     },
 ]
 
-
 # basic struct for each user:
 # {
 #   "_id": ObjectId,
@@ -71,6 +70,8 @@ def create_profile_in_db(form):
     normalized_email = address.lower()
     tags = form.getlist("tags")
     emoji = form.get("emoji", "").strip()
+    nyu_life_tags = form.get("nyu_life_tags", "").strip()
+    school_specific = form.get("school_specific", "").strip()
     description = form.get("description", "").strip()
     major = form.get("major", "").strip()
     gender = form.get("gender", "").strip()
@@ -116,6 +117,8 @@ def create_profile_in_db(form):
         "age": age,
         "major": major,
         "gender": gender,
+        "nyu_life_tags": nyu_life_tags,
+        "school_specific": school_specific,
         "pronouns": pronouns,
         "height": height,
         "clubs_and_sports": clubs_and_sports,
@@ -130,7 +133,7 @@ def create_profile_in_db(form):
         raise ValueError("A profile with this email already exists. Please log in instead.")
     return str(result.inserted_id)
 
-def search_profiles_in_db(args):
+def search_profiles_in_db(args): # search function
     """Search profiles based on query parameters and return a list of matching profiles."""
     import re
 
@@ -171,6 +174,8 @@ def update_profile_in_db(profile_id, form):
         "description": form.get("description", "").strip(),
         "major": form.get("major", "").strip(),
         "gender": form.get("gender", "").strip(),
+        "nyu_life_tags": form.get("nyu_life_tags", "").strip(),
+        "school_specific": form.get("school_specific", "").strip(),
         "pronouns": form.get("pronouns", "").strip(),
         "height": form.get("height", "").strip(),
         "clubs_and_sports": form.get("clubs_and_sports", "").strip(),
@@ -605,7 +610,6 @@ def create_app():
     def view_profile_page(profile_id):
         # Keep old path working; funnel through the query-based view for consistency
         return redirect(url_for("view_profile", id=profile_id))
-
 
     return app
 

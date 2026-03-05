@@ -3,29 +3,23 @@
   <head>
     <title>Search Profiles</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
   </head>
 
   <body class="add-page">
     <div class="page-wrap wide">
-
       <a href="{{ url_for('home') }}" class="back-btn">Back</a>
 
       <h1 class="section-title center">Search Profiles</h1>
 
       <!-- FILTER AREA -->
       <div class="filter-panel">
-        <input
-          type="text"
-          id="searchMajor"
-          placeholder="Search by major"
-        />
+        <input type="text" id="searchMajor" placeholder="Search by major" />
 
-        <input
-          type="text"
-          id="searchGender"
-          placeholder="Search by gender"
-        />
+        <input type="text" id="searchGender" placeholder="Search by gender" />
 
         <input
           type="text"
@@ -38,6 +32,26 @@
           id="searchLookingFor"
           placeholder="Search by looking for"
         />
+
+        <select id="filterByNyuTags">
+          <option value="">Filter by NYU Life Tags</option>
+          <option value="boobst">Bobst regular 📚</option>
+          <option value="kimmel">Kimmel camper</option>
+          <option value="violet_pride">Violet pride 💜</option>
+          <option value="washington_square_park">
+            Always in Washington Square Park
+          </option>
+          <option value="study_abroad">Study abroad soon</option>
+        </select>
+
+        <select id="filterBySchool">
+          <option value="">Filter by School</option>
+          <option value="cas">CAS core survivor</option>
+          <option value="tisch">Tisch creative 🎭</option>
+          <option value="stern">Stern kid 📊</option>
+          <option value="tandon">Tandon engineer 💻</option>
+          <option value="gallatin">Gallatin build-your-own-major</option>
+        </select>
 
         <select id="searchTag">
           <option value="">Filter by tag</option>
@@ -52,50 +66,64 @@
 
       <!-- PROFILES LIST -->
       <div id="profileList">
-        {% for profile in profiles %}
-          <div
-            class="card profile-card"
-            data-major="{{ profile.major | lower }}"
-            data-gender="{{ profile.gender | default('', true) | lower }}"
-            data-clubs-and-sports="{{ profile.clubs_and_sports | default('', true) | lower }}"
-            data-looking-for="{{ profile.looking_for | default('', true) | lower }}"
-            data-tags="{{ profile.tags | join(' ') }}"
-            data-profile-id="{{ profile._id }}"
-          >
-            <h3 class="card-title">{{ profile.name }} {{ profile.emoji }}</h3>
+        <!-- key: value pairs-->
+        {% for profile in profiles %} {% set school_labels = { "cas": "CAS core
+        survivor", "tisch": "Tisch creative 🎭", "stern": "Stern kid 📊",
+        "tandon": "Tandon engineer 💻", "gallatin": "Gallatin
+        build-your-own-major" } %} {% set nyu_labels = { "boobst": "Bobst
+        regular 📚", "kimmel": "Kimmel camper", "violet_pride": "Violet pride
+        💜", "washington_square_park": "Always in Washington Square Park",
+        "study_abroad": "Study abroad soon" } %}
+        <div
+          class="card profile-card"
+          data-major="{{ profile.major | lower }}"
+          data-gender="{{ profile.gender | default('', true) | lower }}"
+          data-clubs-and-sports="{{ profile.clubs_and_sports | default('', true) | lower }}"
+          data-looking-for="{{ profile.looking_for | default('', true) | lower }}"
+          data-tags="{{ profile.tags | join(' ') }}"
+          data-profile-id="{{ profile._id }}"
+          data-nyu-life-tags="{{ profile.nyu_life_tags | default('', true) }}"
+          data-school="{{ profile.school_specific | default('', true) }}"
+        >
+          <h3 class="card-title">{{ profile.name }} {{ profile.emoji }}</h3>
 
-            <p class="card-text">
-              <strong>Major:</strong> {{ profile.major }}
-            </p>
+          <p class="card-text"><strong>Major:</strong> {{ profile.major }}</p>
 
-            <p class="card-text">
-              <strong>Gender:</strong> {{ profile.gender }}
-            </p>
+          <p class="card-text">
+            <strong>School:</strong> {{ school_labels[profile.school_specific]
+            or profile.school_specific }}
+            <!-- if key dont exist, then just show the raw value from db -->
+          </p>
 
-            <p class="card-text">
-              <strong>Pronouns:</strong> {{ profile.pronouns }}
-            </p>
+          <p class="card-text">
+            <strong>NYU Life Tag:</strong> {{ nyu_labels[profile.nyu_life_tags]
+            or profile.nyu_life_tags }}
+          </p>
 
-            <p class="card-text">
-              <strong>Height:</strong> {{ profile.height }}
-            </p>
+          <p class="card-text"><strong>Gender:</strong> {{ profile.gender }}</p>
 
-            <p class="card-text">
-              <strong>Clubs and Sports:</strong> {{ profile.clubs_and_sports }}
-            </p>
+          <p class="card-text">
+            <strong>Pronouns:</strong> {{ profile.pronouns }}
+          </p>
 
-            <p class="card-text">
-              <strong>Looking For:</strong> {{ profile.looking_for }}
-            </p>
+          <p class="card-text"><strong>Height:</strong> {{ profile.height }}</p>
 
-            <p class="card-text">
-              <strong>Tags:</strong> {{ profile.tags | join(', ') }}
-            </p>
+          <p class="card-text">
+            <strong>Clubs and Sports:</strong> {{ profile.clubs_and_sports }}
+          </p>
 
-            <p class="card-desc">
-              <strong>Description:</strong> {{ profile.description }}
-            </p>
-          </div>
+          <p class="card-text">
+            <strong>Looking For:</strong> {{ profile.looking_for }}
+          </p>
+
+          <p class="card-text">
+            <strong>Tags:</strong> {{ profile.tags | join(', ') }}
+          </p>
+
+          <p class="card-desc">
+            <strong>Description:</strong> {{ profile.description }}
+          </p>
+        </div>
         {% endfor %}
       </div>
     </div>
@@ -103,9 +131,13 @@
     <script>
       const majorInput = document.getElementById("searchMajor");
       const genderInput = document.getElementById("searchGender");
-      const clubsAndSportsInput = document.getElementById("searchClubsAndSports");
+      const clubsAndSportsInput = document.getElementById(
+        "searchClubsAndSports",
+      );
       const lookingForInput = document.getElementById("searchLookingFor");
       const tagSelect = document.getElementById("searchTag");
+      const schoolSelect = document.getElementById("filterBySchool");
+      const nyuTagSelect = document.getElementById("filterByNyuTags");
       const profileList = document.getElementById("profileList").children;
       const viewerId = "{{ viewer_id }}";
 
@@ -115,6 +147,8 @@
         const clubsAndSportsFilter = clubsAndSportsInput.value.toLowerCase();
         const lookingForFilter = lookingForInput.value.toLowerCase();
         const tagFilter = tagSelect.value.toLowerCase();
+        const schoolFilter = schoolSelect.value.toLowerCase();
+        const nyuTagFilter = nyuTagSelect.value.toLowerCase();
 
         for (let card of profileList) {
           const major = card.getAttribute("data-major");
@@ -122,14 +156,31 @@
           const clubsAndSports = card.getAttribute("data-clubs-and-sports");
           const lookingFor = card.getAttribute("data-looking-for");
           const tags = card.getAttribute("data-tags");
+          const school = card.getAttribute("data-school");
+          const nyuLifeTag = card.getAttribute("data-nyu-life-tags");
 
           const matchMajor = !majorFilter || major.includes(majorFilter);
           const matchGender = !genderFilter || gender.includes(genderFilter);
-          const matchClubsAndSports = !clubsAndSportsFilter || clubsAndSports.includes(clubsAndSportsFilter);
-          const matchLookingFor = !lookingForFilter || lookingFor.includes(lookingForFilter);
+          const matchClubsAndSports =
+            !clubsAndSportsFilter ||
+            clubsAndSports.includes(clubsAndSportsFilter);
+          const matchLookingFor =
+            !lookingForFilter || lookingFor.includes(lookingForFilter);
           const matchTags = !tagFilter || tags.includes(tagFilter);
+          const matchSchool = !schoolFilter || school.includes(schoolFilter);
+          const matchNyuTag =
+            !nyuTagFilter || nyuLifeTag.includes(nyuTagFilter);
 
-          card.style.display = (matchMajor && matchGender && matchClubsAndSports && matchLookingFor && matchTags) ? "" : "none";
+          card.style.display =
+            matchMajor &&
+            matchGender &&
+            matchClubsAndSports &&
+            matchLookingFor &&
+            matchTags &&
+            matchSchool &&
+            matchNyuTag
+              ? ""
+              : "none";
         }
       }
 
@@ -138,6 +189,8 @@
       clubsAndSportsInput.addEventListener("input", filterProfiles);
       lookingForInput.addEventListener("input", filterProfiles);
       tagSelect.addEventListener("change", filterProfiles);
+      schoolSelect.addEventListener("change", filterProfiles);
+      nyuTagSelect.addEventListener("change", filterProfiles);
 
       Array.from(profileList).forEach((card) => {
         card.addEventListener("click", () => {
