@@ -17,14 +17,26 @@
       <div class="filter-panel">
         <input
           type="text"
-          id="searchName"
-          placeholder="Search by name"
+          id="searchMajor"
+          placeholder="Search by major"
         />
 
         <input
           type="text"
-          id="searchMajor"
-          placeholder="Search by major"
+          id="searchGender"
+          placeholder="Search by gender"
+        />
+
+        <input
+          type="text"
+          id="searchClubsAndSports"
+          placeholder="Search by clubs and sports"
+        />
+
+        <input
+          type="text"
+          id="searchLookingFor"
+          placeholder="Search by looking for"
         />
 
         <select id="searchTag">
@@ -43,8 +55,10 @@
         {% for profile in profiles %}
           <div
             class="card profile-card"
-            data-name="{{ profile.name | lower }}"
             data-major="{{ profile.major | lower }}"
+            data-gender="{{ profile.gender | default('', true) | lower }}"
+            data-clubs-and-sports="{{ profile.clubs_and_sports | default('', true) | lower }}"
+            data-looking-for="{{ profile.looking_for | default('', true) | lower }}"
             data-tags="{{ profile.tags | join(' ') }}"
             data-profile-id="{{ profile._id }}"
           >
@@ -52,6 +66,26 @@
 
             <p class="card-text">
               <strong>Major:</strong> {{ profile.major }}
+            </p>
+
+            <p class="card-text">
+              <strong>Gender:</strong> {{ profile.gender }}
+            </p>
+
+            <p class="card-text">
+              <strong>Pronouns:</strong> {{ profile.pronouns }}
+            </p>
+
+            <p class="card-text">
+              <strong>Height:</strong> {{ profile.height }}
+            </p>
+
+            <p class="card-text">
+              <strong>Clubs and Sports:</strong> {{ profile.clubs_and_sports }}
+            </p>
+
+            <p class="card-text">
+              <strong>Looking For:</strong> {{ profile.looking_for }}
             </p>
 
             <p class="card-text">
@@ -67,32 +101,42 @@
     </div>
 
     <script>
-      const nameInput = document.getElementById("searchName");
       const majorInput = document.getElementById("searchMajor");
+      const genderInput = document.getElementById("searchGender");
+      const clubsAndSportsInput = document.getElementById("searchClubsAndSports");
+      const lookingForInput = document.getElementById("searchLookingFor");
       const tagSelect = document.getElementById("searchTag");
       const profileList = document.getElementById("profileList").children;
       const viewerId = "{{ viewer_id }}";
 
       function filterProfiles() {
-        const nameFilter = nameInput.value.toLowerCase();
         const majorFilter = majorInput.value.toLowerCase();
+        const genderFilter = genderInput.value.toLowerCase();
+        const clubsAndSportsFilter = clubsAndSportsInput.value.toLowerCase();
+        const lookingForFilter = lookingForInput.value.toLowerCase();
         const tagFilter = tagSelect.value.toLowerCase();
 
         for (let card of profileList) {
-          const name = card.getAttribute("data-name");
           const major = card.getAttribute("data-major");
+          const gender = card.getAttribute("data-gender");
+          const clubsAndSports = card.getAttribute("data-clubs-and-sports");
+          const lookingFor = card.getAttribute("data-looking-for");
           const tags = card.getAttribute("data-tags");
 
-          const matchName = !nameFilter || name.includes(nameFilter);
           const matchMajor = !majorFilter || major.includes(majorFilter);
+          const matchGender = !genderFilter || gender.includes(genderFilter);
+          const matchClubsAndSports = !clubsAndSportsFilter || clubsAndSports.includes(clubsAndSportsFilter);
+          const matchLookingFor = !lookingForFilter || lookingFor.includes(lookingForFilter);
           const matchTags = !tagFilter || tags.includes(tagFilter);
 
-          card.style.display = (matchName && matchMajor && matchTags) ? "" : "none";
+          card.style.display = (matchMajor && matchGender && matchClubsAndSports && matchLookingFor && matchTags) ? "" : "none";
         }
       }
 
-      nameInput.addEventListener("input", filterProfiles);
       majorInput.addEventListener("input", filterProfiles);
+      genderInput.addEventListener("input", filterProfiles);
+      clubsAndSportsInput.addEventListener("input", filterProfiles);
+      lookingForInput.addEventListener("input", filterProfiles);
       tagSelect.addEventListener("change", filterProfiles);
 
       Array.from(profileList).forEach((card) => {

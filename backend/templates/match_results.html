@@ -25,6 +25,26 @@
             </p>
 
             <p class="card-text">
+              <strong>Gender:</strong> {{ request.sender.gender }}
+            </p>
+
+            <p class="card-text">
+              <strong>Pronouns:</strong> {{ request.sender.pronouns }}
+            </p>
+
+            <p class="card-text">
+              <strong>Height:</strong> {{ request.sender.height }}
+            </p>
+
+            <p class="card-text">
+              <strong>Clubs and Sports:</strong> {{ request.sender.clubs_and_sports }}
+            </p>
+
+            <p class="card-text">
+              <strong>Looking For:</strong> {{ request.sender.looking_for }}
+            </p>
+
+            <p class="card-text">
               <strong>Tags:</strong> {{ request.sender.tags | join(', ') }}
             </p>
 
@@ -49,6 +69,26 @@
 
             <p class="card-text">
               <strong>Major:</strong> {{ match.major }}
+            </p>
+
+            <p class="card-text">
+              <strong>Gender:</strong> {{ match.gender }}
+            </p>
+
+            <p class="card-text">
+              <strong>Pronouns:</strong> {{ match.pronouns }}
+            </p>
+
+            <p class="card-text">
+              <strong>Height:</strong> {{ match.height }}
+            </p>
+
+            <p class="card-text">
+              <strong>Clubs and Sports:</strong> {{ match.clubs_and_sports }}
+            </p>
+
+            <p class="card-text">
+              <strong>Looking For:</strong> {{ match.looking_for }}
             </p>
 
             <p class="card-text">
