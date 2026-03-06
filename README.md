@@ -26,12 +26,10 @@ cd 2-web-app-solar_sprinters/
 ### 2. create local env file
 ```bash
 # copies an example env to your local env
-cp example-env.txt .env
+cp env.example .env
 ```
 now go into the env file, and edit the following lines:
-1. inside the second line, change the <db_username> and <db_password> to the actual username/password we provided:
-`username: nyu-app-user
-password: wxPwopSb5FrtSdG3`
+1. inside the second line, change the <db_username> and <db_password> to the actual username/password we provided to admins in our team discord channel.
 
 2. run the command listed in line 7 in your terminal shell:
 `python -c "import secrets; print(secrets.token_hex(32))"`
